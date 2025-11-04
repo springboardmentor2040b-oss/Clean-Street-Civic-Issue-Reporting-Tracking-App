@@ -1,41 +1,30 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/Login";
-import RegisterPage from "./pages/Register";
-import LandingPage from "./pages/LandingPage";
-import Profilepage from "./pages/Profilepage";
-import UserDashboard from "./pages/UserDashboard";
-import VolunteerDashboard from "./pages/VolunteerDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
-import ReportIssue from "./pages/ReportIssue";
-import ViewComplaints from "./pages/ViewComplaints";
-import Navbar from "./Components/Navbar";
-import AboutPage from "./pages/AboutPage";
-import HowItWorksPage from "./pages/HowItWorksPage";
-import ServicesPage from "./pages/ServicesPage";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './styles.css';
+import HomePage from './HomePage.jsx';
+import Login from './Login.jsx';
+import Register from './Register.jsx';
+import Dashboard from './Dashboard.jsx';
+import Profile from './Profile.jsx';
+import ReportIssue from './ReportIssue.jsx';
+import ViewComplaints from "./ViewComplaints";
+import AdminDashboard from "./components/AdminDashboard";  // ✅ correct import path
 
-export default function App() {
+function App() {
   return (
-    <>
-   
-      <Router>
+    <Router>
       <Routes>
-         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/profile" element={<Profilepage />} />   
-        <Route path="/UserDashboard" element={<UserDashboard/>}/>
-        <Route path="/VolunteerDashboard" element={<VolunteerDashboard/>}/>
-        <Route path="/AdminDashboard" element={<AdminDashboard />} />
-        <Route path="/ReportIssue" element={<ReportIssue/>}/>
-         <Route path="/view-complaints" element={<ViewComplaints />} />
-         <Route path="/about" element={<AboutPage />} />
-          <Route path="/how-it-works" element={<HowItWorksPage />} />
-          <Route path="/services" element={<ServicesPage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/report" element={<ReportIssue />} />
+        <Route path="/complaints" element={<ViewComplaints />} />
+        <Route path="/admin" element={<AdminDashboard />} /> {/* ✅ consistent name */}
       </Routes>
     </Router>
-
-    </>
-    
   );
 }
+
+export default App;

@@ -1,60 +1,120 @@
-import express from "express";
-import mongoose from "mongoose";
-import config from "./.config/config.js";
-import authRoutes from "./routes/auth.routes.js";
-import userRoutes from "./routes/user.routes.js";
-import complaintRoutes from "./routes/complaint.routes.js";
-import volunteerRoutes from "./routes/volunteer.routes.js";
-import commentRoutes from "./routes/comment.routes.js";
-import adminRoutes from "./routes/admin.routes.js"; // Single, correct import
-import cors from "cors";
-import path from 'path';
-import { fileURLToPath } from 'url';
-import cookieParser from 'cookie-parser';
+// require('dotenv').config();
+// const express = require('express');
+// const connectDB = require('./config/db');
+// const session = require('express-session');
+// const cors = require('cors');
+// const MongoStore = require('connect-mongo');
+// const path = require('path');
+
+// const userRoutes = require('./routes/userRoutes');
+// const issueRoutes = require('./routes/issueRoutes');
+
+// const app = express();
+
+// // ✅ Connect to MongoDB
+// connectDB();
+
+// // ==========================
+// // Middleware
+// // ==========================
+
+// // Increase JSON payload limit to handle Base64 images
+// app.use(express.json({ limit: '10mb' })); // Accept JSON up to 10MB
+// app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// // Enable CORS
+// app.use(
+//   cors({
+//     origin: 'http://localhost:3000',
+//     credentials: true,
+//   })
+// );
+
+// // Session middleware
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET || 'defaultsecret',
+//     resave: false,
+//     saveUninitialized: false,
+//     store: MongoStore.create({
+//       mongoUrl: process.env.MONGO_URI,
+//       collectionName: 'sessions',
+//     }),
+//     cookie: {
+//       secure: false,
+//       httpOnly: true,
+//       sameSite: 'lax',
+//       maxAge: 24 * 60 * 60 * 1000, // 1 day
+//     },
+//   })
+// );
+
+// // Serve static uploads folder
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// // Test route
+// app.get('/', (req, res) => {
+//   res.send('API is running...');
+// });
+
+// // Mount user routes
+// app.use('/api/users', userRoutes);
+
+// // Mount issue routes
+// app.use('/api/issues', issueRoutes);
+
+// // Start server
+// const PORT = process.env.PORT || 5001;
+// app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+
+
+require('dotenv').config();
+const express = require('express');
+const connectDB = require('./config/db');
+const session = require('express-session');
+const cors = require('cors');
+const MongoStore = require('connect-mongo');
+const path = require('path');
+
+const userRoutes = require('./routes/userRoutes');
+const issueRoutes = require('./routes/issueRoutes');
 
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
-// --- Middleware ---
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://infosys-spring-board-clean-p-roject.vercel.app"
-  ],
-  credentials: true
-}));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use(express.json());
-app.use(cookieParser());
-// --- API Routes ---
-app.get("/", (req, res) => {
-  res.send("API is running...");
-}
-);
-app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/complaints", complaintRoutes);
-app.use("/api/volunteer", volunteerRoutes);
-app.use("/api/comments", commentRoutes);
-app.use("/api/admin", adminRoutes); // Use the routes once
+// Connect DB
+connectDB();
 
+// Middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-// --- Database Connection ---
-if (!config.MONGO_URL) {
-  console.error("❌ MongoDB connection error: MONGO_URL is missing.");
-  process.exit(1);
-}
-
-mongoose.connect(config.MONGO_URL)
-  .then(() => {
-    console.log("✅ MongoDB Connected");
-    app.listen(config.PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${config.PORT}`);
-    });
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    credentials: true,
   })
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
-    process.exit(1);
-  }
 );
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'defaultsecret',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      collectionName: 'sessions',
+    }),
+    cookie: { secure: false, httpOnly: true, sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 },
+  })
+);
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.get('/', (req, res) => res.send('API is running...'));
+
+app.use('/api/users', userRoutes);
+app.use('/api/issues', issueRoutes);
+
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

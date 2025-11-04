@@ -1,0 +1,19 @@
+.features {
+  display: flex;
+  justify-content: center;
+  margin-top: -80px; /* This pulls the section up over the hero image */
+  position: relative;
+  z-index: 5;
+  padding: 0 2%; /* Reduced padding to give the image more space */
+}
+
+.image {
+  /* Set a specific larger width */
+  width: 900px; 
+  /* This ensures the image will shrink to fit on smaller screens */
+  max-width: 100%; 
+  height: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+

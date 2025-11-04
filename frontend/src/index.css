@@ -1,106 +1,37 @@
-/* src/index.css */
-@import "tailwindcss"; /* */
-
-body { /* */
-  margin: 0; /* */
-  padding: 0; /* */
-  font-family: 'Poppins', sans-serif; /* Keep your font */ /* */
-  -webkit-font-smoothing: antialiased; /* */
-  -moz-osx-font-smoothing: grayscale; /* */
-  background-color: #c9d0d6; /* Or your preferred base bg */ /* */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Prevent unwanted text cursor/caret */
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+body {
+  margin: 0;
+  /* 2. ADD 'Poppins' AT THE BEGINNING OF THIS LIST */
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #333; /* Also good to add this default text color */
+}
+
+/* You can keep this part untouched for your other pages */
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* 3. ADD THIS NEW RULE AT THE BOTTOM */
 * {
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+/Edge */
-  user-select: none; /* Standard */
+  box-sizing: border-box;
 }
-
-/* Allow text selection only where needed */
-input, textarea, [contenteditable="true"], p, span, h1, h2, h3, h4, h5, h6 {
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
-}
-
-/* Remove outline on focus for non-interactive elements */
-div:focus, span:focus, img:focus {
-  outline: none;
-}
-
-/* Ensure buttons and links don't show text cursor */
-button, a, [role="button"] {
-  cursor: pointer;
-}
-
-/* Refined Keyframes for smoother entry */
-@keyframes fade-in-down { /* */
-  from { /* */
-    opacity: 0; /* */
-    transform: translateY(-25px); /* Slightly more distance */ /* */
-  }
-  to { /* */
-    opacity: 1; /* */
-    transform: translateY(0); /* */
-  }
-}
-
-@keyframes fade-in-up { /* */
-  from { /* */
-    opacity: 0; /* */
-    transform: translateY(25px); /* Slightly more distance */ /* */
-  }
-  to { /* */
-    opacity: 1; /* */
-    transform: translateY(0); /* */
-  }
-}
-
-/* Apply base animations */
-.animate-fade-in-down { /* */
-  animation: fade-in-down ease-out forwards; /* */
-}
-
-.animate-fade-in-up { /* */
-  animation: fade-in-up ease-out forwards; /* */
-}
-
-/* Tailwind animation delays (keep these or adjust if needed) */
-/* If these classes (.animation-delay-*) don't work reliably,
-   you can use inline style like: style={{ animationDelay: '300ms' }} */
-.animation-delay-200 { animation-delay: 0.2s; } /* */
-.animation-delay-300 { animation-delay: 0.3s; } /* */
-.animation-delay-400 { animation-delay: 0.4s; } /* */
-.animation-delay-500 { animation-delay: 0.5s; } /* */
-.animation-delay-700 { animation-delay: 0.7s; } /* */
-
-
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.hero-background::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(29, 78, 216, 0.1), rgba(79, 70, 229, 0.1), rgba(124, 58, 237, 0.1));
-  background-size: 200% 200%;
-  animation: gradient-shift 15s ease infinite;
-  z-index: 1; 
-
-.hero-background > div:nth-child(2) { 
-  position: relative;
-  z-index: 2; 
-}
-
-
-.filter.invert.brightness-0 { 
-    filter: invert(1) brightness(100);
-}
-}
-

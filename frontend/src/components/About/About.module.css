@@ -1,0 +1,11 @@
+.about {
+  padding: 4rem 15%;
+  text-align: center;
+}
+.text {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto;
+}

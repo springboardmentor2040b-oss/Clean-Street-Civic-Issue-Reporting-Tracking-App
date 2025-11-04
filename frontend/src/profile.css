@@ -1,0 +1,432 @@
+.profile-container {
+  padding: 2rem;
+  font-family: "Poppins", sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 90%;
+}
+
+/* Back button */
+.back-btn {
+  cursor: pointer;
+  margin-bottom: 1rem;
+  color: #2f4f40;
+  font-weight: bold;
+}
+
+/* Profile Header (View Mode) */
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+/* Edit Profile Header */
+.edit-profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.avatar-box {
+  position: relative;
+}
+.avatar-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.camera-btn {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  background: #6aa84f;
+  border: none;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: 100%;
+}
+
+/* Adjusted camera button background size for uploading text */
+.camera-btn:disabled {
+  font-size: 0.8rem;
+  background: #6aa84f;
+  width: auto;
+  padding: 0.5rem 1rem;
+}
+
+/* Buttons */
+.primary-btn {
+  background: #6aa84f;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.primary-btn:hover {
+  background: #5a9444;
+}
+.secondary-btn {
+  background: #ddd;
+  color: #333;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.secondary-btn:hover {
+  background: #bbb;
+}
+
+/* Account Info */
+.account-info {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+.account-info h3 {
+  margin-bottom: 0.5rem;
+}
+.info-sub {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+.info-row {
+  display: flex;
+  margin: 0.8rem 0;
+}
+.info-row label {
+  min-width: 100px;
+  font-weight: bold;
+}
+
+/* Reports card */
+.reports-card {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+.circle-chart {
+  width: 120px;
+  height: 120px;
+  position: relative;
+}
+.circle-bg {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 3.8;
+}
+.circle {
+  fill: none;
+  stroke: #6aa84f;
+  stroke-width: 3.8;
+  stroke-linecap: round;
+}
+.circle-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Edit Profile Mode */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #6aa84f;
+  color: white;
+  padding: 1rem 2rem;
+  margin-bottom: 2rem;
+}
+.topbar .logo {
+  font-weight: bold;
+  cursor: pointer;
+}
+.topbar nav span {
+  margin: 0 1rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.topbar nav span:hover {
+  text-decoration: underline;
+}
+
+.edit-profile {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.edit-profile-container {
+
+  background-color: #ffffff;
+  border-radius: 4%;
+}
+
+.edit-profile-container .camera-btn {
+  top: 15%;
+}
+
+
+.edit-form {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+.form-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.form-fields input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+.button-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+/* Added separate classes for Profile and Edit Profile pages */
+.edit-profile-container {
+  padding: 2rem;
+  font-family: "Poppins", sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive design for profile */
+@media (max-width: 1024px) {
+  .profile-container {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .profile-header {
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .reports-card {
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-container {
+    width: 100%;
+    padding: 1rem;
+    margin: 0;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .profile-header .avatar-box {
+    order: -1;
+  }
+
+  .profile-header .profile-info {
+    order: 0;
+  }
+
+  .profile-header .primary-btn {
+    order: 1;
+    align-self: center;
+  }
+
+  .avatar-large {
+    width: 80px;
+    height: 80px;
+  }
+
+  .camera-btn {
+    width: 25px;
+    height: 25px;
+    font-size: 1rem;
+    bottom: 0px;
+    right: 0px;
+  }
+
+  .reports-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .circle-chart {
+    width: 100px;
+    height: 100px;
+  }
+
+  .circle-text {
+    font-size: 1rem;
+  }
+
+  .edit-form {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .form-fields {
+    gap: 0.8rem;
+  }
+
+  .form-fields input {
+    padding: 0.8rem;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .button-row {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    width: 100%;
+    padding: 0.8rem;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 0.3rem;
+    margin: 1rem 0;
+  }
+
+  .info-row label {
+    min-width: auto;
+    font-weight: bold;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-container {
+    padding: 0.8rem;
+  }
+
+  .profile-header {
+    padding: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .edit-profile-container {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .account-info {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .reports-card {
+    padding: 1rem;
+  }
+
+  .avatar-large {
+    width: 70px;
+    height: 70px;
+  }
+
+  .camera-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 0.8rem;
+  }
+
+  .circle-chart {
+    width: 80px;
+    height: 80px;
+  }
+
+  .circle-text {
+    font-size: 0.9rem;
+  }
+
+  .form-fields input {
+    padding: 0.7rem;
+  }
+
+  /* Improve touch targets */
+  .primary-btn,
+  .secondary-btn,
+  .camera-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Better spacing for small screens */
+  .form-fields label {
+    margin-bottom: 0.3rem;
+  }
+
+  .button-row {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .profile-container {
+    padding: 0.5rem;
+  }
+
+  .profile-header {
+    padding: 0.5rem;
+  }
+
+  .avatar-large {
+    width: 60px;
+    height: 60px;
+  }
+
+  .camera-btn {
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+  }
+}
