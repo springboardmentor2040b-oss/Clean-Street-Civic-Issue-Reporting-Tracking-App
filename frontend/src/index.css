@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens */
+:root {
+  --card: 255 255 255;
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-white text-gray-900;
+  }
+  h1,h2,h3,h4,h5,h6 { @apply font-display; }
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-md border border-gray-300 bg-white px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 shadow-soft;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+  .btn-primary { @apply bg-gray-900 text-white hover:bg-black; }
+  .btn-brand { @apply bg-brand-600 text-white hover:bg-brand-700; }
+  .btn-ghost { @apply bg-white border border-gray-300 hover:bg-gray-50; }
+}
+
+
