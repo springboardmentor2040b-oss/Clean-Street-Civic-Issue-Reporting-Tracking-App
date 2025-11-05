@@ -7,7 +7,7 @@ export const verifyToken = async (req, res, next) => {
     // 🔹 Extract token from cookie or Authorization header
     let token =
       req.cookies?.token ||
-      req.headers["authorization"]?.split(" ")[1] || // safer split
+      req.headers["authorization"]?.split(" ")[1] || 
       null;
 
     if (!token) {

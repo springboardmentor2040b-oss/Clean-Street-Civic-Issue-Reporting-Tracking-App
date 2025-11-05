@@ -1,5 +1,4 @@
 
-// ✅ complaintController.js (Final — Assign Button Fully Working + Real-Time Update)
 import Complaint from "../models/complaintModel.js";
 import User from "../models/userModel.js";
 import { v2 as cloudinary } from "cloudinary";
