@@ -4,54 +4,64 @@ import {
   getAllUsersAdmin,
   updateUserRoleAdmin,
   updateComplaintStatusAdmin,
-  getAdminStats
+  getAdminStats,
 } from "../controller/admin.controller.js";
 
-import {getAllAdminLogs,recordAdminLog} from "../controller/adminLog.controller.js"
-import { protect, authorize } from "../middleware/auth.middleware.js"; // Import authorize
+import { getAllAdminLogs, recordAdminLog } from "../controller/adminLog.controller.js";
+import { protect, authorize } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-// Protect all routes below & ensure only 'admin' role can access
+// ✅ Require login for all routes
 router.use(protect);
-router.use(authorize('admin')); // Apply admin authorization to all routes in this file
 
 /**
  * @route   GET /api/admin/complaints
  * @desc    Get all complaints
  * @access  Private (Admin only)
  */
-router.get("/complaints", getAllComplaintsAdmin);
+router.get("/complaints", authorize("admin"), getAllComplaintsAdmin);
 
 /**
  * @route   GET /api/admin/users
  * @desc    Get all users
  * @access  Private (Admin only)
  */
-router.get("/users", getAllUsersAdmin);
+router.get("/users", authorize("admin"), getAllUsersAdmin);
 
 /**
  * @route   PATCH /api/admin/users/:userId/role
  * @desc    Update a user's role
  * @access  Private (Admin only)
  */
-router.patch("/users/:userId/role", updateUserRoleAdmin);
+router.patch("/users/:userId/role", authorize("admin"), updateUserRoleAdmin);
 
 /**
  * @route   PATCH /api/admin/complaints/:complaintId/status
  * @desc    Update a complaint's status
  * @access  Private (Admin only)
  */
-router.patch("/complaints/:complaintId/status", updateComplaintStatusAdmin);
+router.patch("/complaints/:complaintId/status", authorize("admin"), updateComplaintStatusAdmin);
 
 /**
  * @route   GET /api/admin/stats
  * @desc    Get dashboard statistics
  * @access  Private (Admin only)
  */
-router.get("/stats", getAdminStats);
+router.get("/stats", authorize("admin"), getAdminStats);
 
-router.get("/logs",getAllAdminLogs)
-router.post("/logs",recordAdminLog);
+/**
+ * @route   GET /api/admin/logs
+ * @desc    Get admin logs (Visible to all authenticated users)
+ * @access  Private (User, Volunteer, Admin)
+ */
+router.get("/logs", getAllAdminLogs);
+
+/**
+ * @route   POST /api/admin/logs
+ * @desc    Record admin action
+ * @access  Private (Admin only)
+ */
+router.post("/logs", authorize("admin"), recordAdminLog);
 
 export default router;
