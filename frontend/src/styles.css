@@ -1,0 +1,284 @@
+/* Global reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  background: #f7f7f7;
+  color: #333;
+}
+
+/* Auth pages */
+.auth-container {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+.auth-box {
+  background: #fff;
+  padding: 4rem 3rem;                    /* increased padding */
+  border-radius: 20px;                   /* smoother corners */
+  box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+  width: 520px;                          /* wider box */
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.auth-box img.logo {
+  width: 140px;                          /* larger logo */
+  height: auto;                          /* keeps proportions */
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 1.8rem auto;            /* nicely centered */
+}
+
+.auth-box h2 {
+  margin-bottom: 1.5rem;
+}
+.auth-box input {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+.role-select {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.role-btn {
+  flex: 1;
+  margin: 0 5px;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 8px;
+  background: #6aa84f;
+  color: #fff;
+  cursor: pointer;
+}
+.primary-btn {
+  background: #6aa84f;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.primary-btn:hover {
+  background: #5a9444;
+}
+
+/* Dashboard layout */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ddd;
+}
+.navbar input {
+  flex: 1;
+  margin: 0 2rem;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+.dashboard {
+  display: flex;
+}
+.sidebar {
+  width: 200px;
+  background: #fff;
+  padding: 2rem 1rem;
+  border-right: 1px solid #ddd;
+}
+.sidebar ul {
+  list-style: none;
+}
+.sidebar li {
+  padding: 0.8rem;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.sidebar li.active,
+.sidebar li:hover {
+  background: #6aa84f;
+  color: #fff;
+}
+.content {
+  flex: 1;
+  padding: 2rem;
+}
+.kpis {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.kpi {
+  background: #fff;
+  flex: 1;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  font-weight: 600;
+}
+.kpi span {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+}
+.complaints {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+  gap: 1.5rem;
+}
+.card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 1rem;
+}
+.card img {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.card h3 {
+  margin: 0.8rem 0 0.4rem;
+}
+.status {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+.status.received {
+  background: #f2a65a33;
+  color: #d87c18;
+}
+.status.review {
+  background: #4682b433;
+  color: #2f4f90;
+}
+.status.resolved {
+  background: #39a84533;
+  color: #267d30;
+}
+img {
+  height: 200px;
+}
+/* Make inputs and select look the same */
+.auth-box input,
+.auth-box select {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+  appearance: none; /* makes select clean */
+  transition: all 0.2s ease;
+}
+
+.auth-box input:focus,
+.auth-box select:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+/* Input group styling for required fields */
+.input-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 0.8rem;
+  padding-right: 2rem; /* Make room for asterisk */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+  transition: all 0.2s ease;
+  margin-bottom: 0;
+}
+
+.required-asterisk {
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #e74c3c;
+  font-weight: bold;
+  font-size: 1.2rem;
+  pointer-events: none;
+  z-index: 10;
+}
+/* Extra spacing below password input */
+.auth-box input[type="password"] {
+  margin-bottom: 1rem; /* bigger space */
+}
+
+/* Keep select margin normal */
+.auth-box select {
+  margin-bottom: 1rem; /* regular spacing */
+}
+.auth-box .primary-btn {
+  margin-bottom: 1rem; /* adds space below the button */
+}
+/* Make clickable links in forms blue */
+.link-text {
+  color: #007bff;        /* blue color */
+  cursor: pointer;       /* cursor changes to pointer on hover */
+  text-decoration: underline; /* optional, underline for link look */
+  transition: color 0.2s ease;
+}
+
+.link-text:hover {
+  color: #0056b3; /* darker blue on hover */
+}
+
+/* Make clickable links in forms blue */
+.link-text {
+  color: #007bff;              /* blue color */
+  cursor: pointer;             /* pointer cursor on hover */
+  text-decoration: underline;  /* optional underline */
+  transition: color 0.2s ease;
+}
+
+.link-text:hover {
+  color: #0056b3;             /* darker blue on hover */
+}
+
+/* Style asterisk in placeholder text to be red */
+.auth-box input[placeholder="* Email"],
+.auth-box input[placeholder="* Password"] {
+  font-family: "Poppins", sans-serif;
+}
+
+.auth-box input[placeholder="* Email"]::placeholder,
+.auth-box input[placeholder="* Password"]::placeholder {
+  color: #666;
+}
+
+.auth-box input[placeholder*="* "]::placeholder::first-letter {
+  color: #e74c3c;
+  font-weight: bold;
+}

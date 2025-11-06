@@ -1,0 +1,89 @@
+# =========================
+# MERN Stack Project
+# =========================
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+dist/
+build/
+public/build/
+coverage/
+.tmp/
+.cache/
+.next/
+out/
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE / Editor folders
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# React specific
+node_modules/
+build/
+.cache/
+public/static/
+*.pem
+
+# Express / Backend specific
+uploads/
+tmp/
+sessions/
+*.pid
+*.seed
+*.pid.lock
+
+# MongoDB related
+*.mongodb
+*.bak
+dump/
+data/
+
+# Test coverage / Reports
+coverage/
+.nyc_output/
+test-results/
+
+# Optional: ignore Docker artifacts
+docker-compose.override.yml
+.docker/
+Dockerfile*
+
+# Optional: Ignore environment-specific configs
+config/*.local.js
+config/local.json
+
+# Optional: ignore TypeScript build artifacts
+*.tsbuildinfo
