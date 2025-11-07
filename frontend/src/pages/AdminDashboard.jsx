@@ -390,21 +390,29 @@ const AdminDashboard = () => {
           
           {activeTab === 'recent activities' && ( 
            
-                   <div className="bg-white rounded-xl shadow p-4">
-  <h2 className="text-xl font-semibold mb-3">Recent Activities</h2>
-  <ul className="space-y-2">
-    {activities.map((log) => (
-      <li key={log._id} className="border-b pb-2">
-        <span className="font-medium text-gray-800">{log.user_id?.name || "Unknown Admin"}</span>
-        {" "}- {log.action}
-        <div className="text-xs text-gray-500">
-          {new Date(log.timestamp).toLocaleString()}
-        </div>
-      </li>
-    ))}
-  </ul>
-</div>
-
+                   <section className="mb-10">
+                               <h2 className="text-2xl font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                                 <FiActivity className="text-indigo-500" /> Recent Updates
+                               </h2>
+                               {activities.length === 0 ? (
+                                 <div className="bg-white rounded-xl shadow border border-gray-100 p-6 text-center">
+                                   <p className="text-gray-500 text-sm">No recent updates from admin yet.</p>
+                                 </div>
+                               ) : (
+                                 <ul className="bg-white rounded-xl shadow border border-gray-100 divide-y divide-gray-200">
+                                   {activities.map((log) => (
+                                     <li key={log._id} className="p-4 hover:bg-gray-50 transition-colors">
+                                       <div className="flex justify-between items-start">
+                                         <p className="text-gray-800 text-sm">
+                                           {log.action}
+                                         </p>
+                                         <span className="text-xs text-gray-500">{new Date(log.timestamp).toLocaleString()}</span>
+                                       </div>
+                                     </li>
+                                   ))}
+                                 </ul>
+                               )}
+                             </section>
           
           )}
         </div>

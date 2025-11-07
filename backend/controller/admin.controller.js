@@ -136,7 +136,7 @@ export const updateComplaintStatusAdmin = async (req, res) => {
     // log admin action
 
   const adminName = req.user?.name || "unknown Admin";
-  const action = `${adminName} updated complaint (${complaint.title}) status from ${oldStatus} to '${status}' `;
+  const action = ` Updated complaint (${complaint.title}) status from ${oldStatus} to '${status}' `;
 
   
   
