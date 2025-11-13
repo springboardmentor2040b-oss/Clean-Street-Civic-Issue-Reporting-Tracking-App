@@ -32,6 +32,9 @@ export default function Navbar() {
             <NavLink to="/report" className={({isActive}) => `px-4 py-2 rounded-full border ${isActive ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 hover:bg-gray-50'}`}>📝 Report Issue</NavLink>
           )}
           <NavLink to="/complaints" className={({isActive}) => `px-4 py-2 rounded-full border ${isActive ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 hover:bg-gray-50'}`}>📋 View Complaints</NavLink>
+          {user?.role === 'volunteer' && (
+            <NavLink to="/nearby-complaints" className={({isActive}) => `px-4 py-2 rounded-full border ${isActive ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 hover:bg-gray-50'}`}>📍 Nearby Complaints</NavLink>
+          )}
           {user ? (
             <>
               <NavLink to="/profile" className="px-2 py-2 rounded-full flex items-center">
@@ -85,6 +88,9 @@ export default function Navbar() {
               <NavLink to="/report" onClick={() => setOpen(false)} className={({isActive}) => `px-3 py-2 rounded-md border ${isActive ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 hover:bg-gray-50'}`}>📝 Report Issue</NavLink>
             )}
             <NavLink to="/complaints" onClick={() => setOpen(false)} className={({isActive}) => `px-3 py-2 rounded-md border ${isActive ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 hover:bg-gray-50'}`}>📋 View Complaints</NavLink>
+            {user?.role === 'volunteer' && (
+              <NavLink to="/nearby-complaints" onClick={() => setOpen(false)} className={({isActive}) => `px-3 py-2 rounded-md border ${isActive ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 hover:bg-gray-50'}`}>📍 Nearby Complaints</NavLink>
+            )}
             {user ? (
               <div className="flex items-center justify-between gap-3">
                 <NavLink to="/profile" onClick={() => setOpen(false)} className="flex items-center gap-2">

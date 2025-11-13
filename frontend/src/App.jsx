@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Complaints from './pages/Complaints'
+import NearbyComplaints from './pages/NearbyComplaints'
 import ReportIssue from './pages/ReportIssue'
 import Profile from './pages/Profile'
 import Home from './pages/Home'
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="/dashboard" element={<ProtectedRoute><RoleAwareDashboard /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
             <Route path="/complaints" element={<ProtectedRoute><Complaints /></ProtectedRoute>} />
+            <Route path="/nearby-complaints" element={<ProtectedRoute><NearbyComplaints /></ProtectedRoute>} />
             <Route path="/report" element={<ProtectedRoute><ReportIssue /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 

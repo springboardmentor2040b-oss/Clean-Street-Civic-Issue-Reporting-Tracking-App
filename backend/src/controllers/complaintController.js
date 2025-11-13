@@ -1,14 +1,52 @@
 import Complaint from "../models/Complaint.js";
+import User from "../models/User.js";
 import { recordLog } from './adminLogController.js'
 import ImageKit from "imagekit";
 
-export async function listRecent(_req, res) {
-  const items = await Complaint.find({}).sort({ created_at: -1 }).limit(5);
+// Helper: safe regex from string
+function escapeRegex(str = "") {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Build a Mongo filter based on the caller's role/location
+async function buildFilterForUser(req) {
+  // Admin can see all
+  if (req.user?.role === "admin") {
+    return {};
+  }
+
+  // Volunteers: restrict to their configured location
+  if (req.user?.role === "volunteer") {
+    // Fetch latest user document to get location (not present in JWT)
+    const me = await User.findById(req.user.id).select("location");
+    const myLoc = (me?.location || "").trim();
+    if (!myLoc) {
+      // No location set for volunteer -> show nothing
+      return { _id: { $in: [] } };
+    }
+    return { address: { $regex: escapeRegex(myLoc), $options: "i" } };
+  }
+
+  // Default: existing behavior (return all)
+  return {};
+}
+
+export async function listRecent(req, res) {
+  const filter = await buildFilterForUser(req);
+  const items = await Complaint.find(filter).sort({ created_at: -1 }).limit(5);
   res.json(items);
 }
 
 export async function listAll(_req, res) {
+  // Unrestricted list: show all complaints regardless of role
   const items = await Complaint.find({}).sort({ created_at: -1 });
+  res.json(items);
+}
+
+// Nearby for volunteers/admins: filter to volunteer's configured location
+export async function listNearby(req, res) {
+  const filter = await buildFilterForUser(req);
+  const items = await Complaint.find(filter).sort({ created_at: -1 });
   res.json(items);
 }
 
@@ -79,16 +117,31 @@ export async function updateComplaintStatus(req, res) {
   if (!allowed.includes(status)) {
     return res.status(400).json({ message: "Invalid status" })
   }
-  const patch = { status }
-  if (typeof assigned_to === 'string') patch.assigned_to = assigned_to
-  const updated = await Complaint.findByIdAndUpdate(
-    id,
-    { $set: patch },
-    { new: true }
-  )
-  if (!updated) return res.status(404).json({ message: 'Complaint not found' })
-  // Log
-  await recordLog(req.user.id, 'update_status')
+
+  // Fetch first so we know previous status for logging
+  const doc = await Complaint.findById(id)
+  if (!doc) return res.status(404).json({ message: 'Complaint not found' })
+
+  const prevStatus = doc.status
+  let statusChanged = false
+  if (status && status !== prevStatus) {
+    doc.status = status
+    statusChanged = true
+  }
+  if (typeof assigned_to === 'string') {
+    doc.assigned_to = assigned_to
+  }
+
+  const updated = await doc.save()
+
+  // Construct richer log message
+  let action
+  if (statusChanged) {
+    action = `complaint "${updated.title}" status updated from ${prevStatus} to ${updated.status}`
+  } else {
+    action = `complaint "${updated.title}" status unchanged (still ${updated.status})`
+  }
+  await recordLog(req.user.id, action)
   res.json(updated)
 }
 

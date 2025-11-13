@@ -32,12 +32,30 @@ export async function updateUserRole(req, res) {
   if (String(req.user.id) === String(id) && req.user.role === 'admin' && role !== 'admin') {
     return res.status(400).json({ message: 'Admins cannot demote themselves' })
   }
+  // Fetch current to detect role change for logging
+  const current = await User.findById(id).select('-password')
+  if (!current) return res.status(404).json({ message: 'User not found' })
+
+  const prevRole = current.role
   const updated = await User.findByIdAndUpdate(
     id,
     { $set: { role } },
     { new: true }
   ).select('-password')
   if (!updated) return res.status(404).json({ message: 'User not found' })
-  await recordLog(req.user.id, 'update_user_role')
+  // Always log the attempt; distinguish between change and noop
+  const actor = req.user?.name || req.user?.email || String(req.user.id)
+  const target = current?.name || current?.email || String(id)
+  let action
+  if (prevRole !== role) {
+    action = `role_change: admin='${actor}' changed '${target}' from '${prevRole}' to '${role}'`
+  } else {
+    action = `role_change_noop: admin='${actor}' kept '${target}' at '${role}'`
+  }
+  // Debug trace (can remove later)
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('[adminLog]', action)
+  }
+  await recordLog(req.user.id, action)
   res.json(updated)
 }

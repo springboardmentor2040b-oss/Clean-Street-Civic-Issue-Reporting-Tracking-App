@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { api } from "../api/client";
+import { api, fetchRecentUpdates } from "../api/client";
 
 export default function Dashboard() {
   const { token } = useAuth();
-  const [items, setItems] = useState([]); // recent activity (global)
+  const [items, setItems] = useState([]); // recent complaints for live Activity
+  const [updates, setUpdates] = useState([]); // recent admin/user actions
   const [all, setAll] = useState([]); // all complaints for global stats
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -12,12 +13,14 @@ export default function Dashboard() {
   useEffect(() => {
     let mounted = true;
     Promise.all([
-      api("/complaints/recent", { token }),
-      api("/complaints", { token }),
+      api("/complaints/recent", { token }), // recent complaints for Activity
+      fetchRecentUpdates(token), // logs for Recent Updates
+      api("/complaints", { token }), // all complaints for stats
     ])
-      .then(([recent, all]) => {
+      .then(([recent, logs, all]) => {
         if (!mounted) return;
         setItems(recent);
+        setUpdates(logs);
         setAll(all);
       })
       .catch((e) => mounted && setError(e.message))
@@ -26,7 +29,7 @@ export default function Dashboard() {
   }, [token]);
 
   const counts = useMemo(() => {
-    const src = all.length ? all : items;
+  const src = all.length ? all : [];
     return {
       total: src.length,
       pending: src.filter((i) => i.status === "received").length,
@@ -54,40 +57,89 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[1fr,400px] gap-8">
-            {/* Activity card */}
-            <div className="rounded-2xl border border-gray-200 shadow-sm bg-white transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md hover:border-gray-300">
-              <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-                <h2 className="font-medium">Activity</h2>
-                <span className="text-xs text-green-600 bg-green-50 border border-green-200 rounded-md px-2 py-0.5">
-                  Live Updates
-                </span>
+            <div className="space-y-4">
+              {/* Activity card (unchanged live updates) */}
+              <div className="rounded-2xl border border-gray-200 shadow-sm bg-white transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md hover:border-gray-300">
+                <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                  <h2 className="font-medium">Activity</h2>
+                  <span className="text-xs text-green-600 bg-green-50 border border-green-200 rounded-md px-2 py-0.5">
+                    Live Updates
+                  </span>
+                </div>
+                <ul className="divide-y divide-gray-100">
+                  {items.map((i) => (
+                    <li
+                      key={i._id}
+                      className="px-4 py-3 flex items-center justify-between gap-3"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center">
+                          👤
+                        </div>
+                        <div>
+                          <p className="font-medium">{i.title}</p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(i.created_at).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                      <StatusIcon status={i.status} />
+                    </li>
+                  ))}
+                  {items.length === 0 && (
+                    <li className="px-4 py-6 text-center text-gray-500">
+                      No complaints yet.
+                    </li>
+                  )}
+                </ul>
               </div>
-              <ul className="divide-y divide-gray-100">
-                {items.map((i) => (
-                  <li
-                    key={i._id}
-                    className="px-4 py-3 flex items-center justify-between gap-3"
+
+              {/* Recent Updates card (admin panel activities) */}
+              <div className="rounded-2xl border border-gray-200 shadow-sm bg-white transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md hover:border-gray-300">
+                <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                  <h2 className="font-medium">Recent Updates</h2>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const logs = await fetchRecentUpdates(token);
+                        setUpdates(logs);
+                      } catch (e) {}
+                    }}
+                    className="text-xs px-2 py-0.5 rounded border border-gray-200 hover:bg-gray-50"
                   >
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center">
-                        👤
+                    Refresh
+                  </button>
+                </div>
+                <ul className="divide-y divide-gray-100 max-h-56 overflow-y-auto pr-2">
+                  {updates.map((l) => (
+                    <li
+                      key={l._id}
+                      className="px-4 py-3 flex items-start justify-between gap-3"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center">
+                          📝
+                        </div>
+                        <div className="text-sm">
+                          <p className="font-medium">
+                            {l.actor ? l.actor.name + ' - ' : ''}
+                            <span className="font-normal text-gray-700">{l.action}</span>
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {new Date(l.timestamp).toLocaleString()}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium">{i.title}</p>
-                        <p className="text-xs text-gray-500">
-                          {new Date(i.created_at).toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-                    <StatusIcon status={i.status} />
-                  </li>
-                ))}
-                {items.length === 0 && (
-                  <li className="px-4 py-6 text-center text-gray-500">
-                    No complaints yet.
-                  </li>
-                )}
-              </ul>
+                    </li>
+                  ))}
+                  {updates.length === 0 && (
+                    <li className="px-4 py-6 text-center text-gray-500">
+                      No recent updates yet.
+                    </li>
+                  )}
+                </ul>
+              </div>
             </div>
 
             <aside className="space-y-4">

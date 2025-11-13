@@ -6,6 +6,7 @@ import {
   createComplaint,
   listRecent,
   listAll,
+  listNearby,
 } from "../controllers/complaintController.js";
 
 const router = Router();
@@ -15,6 +16,7 @@ const upload = multer({
 });
 router.get("/", authRequired, listAll);
 router.get("/recent", authRequired, listRecent);
+router.get("/nearby", authRequired, requireRoles('admin','volunteer'), listNearby);
 // Accept multiple photos under the 'photos' field (up to 6)
 router.post("/", authRequired, upload.array("photos", 6), createComplaint);
 

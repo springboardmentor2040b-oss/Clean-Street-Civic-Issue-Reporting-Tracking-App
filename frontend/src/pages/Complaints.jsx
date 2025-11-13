@@ -1,11 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { api } from "../api/client";
+import { api, fetchComments, postComment, reactComment } from "../api/client";
 
 export default function Complaints() {
   const { token, user } = useAuth();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Filters
+  const [locationFilter, setLocationFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [userLocations, setUserLocations] = useState([]); // registered locations (admin only fetch)
   const [selected, setSelected] = useState(null);
   const [busy, setBusy] = useState(false);
   const [statusBusy, setStatusBusy] = useState(null);
@@ -15,15 +19,52 @@ export default function Complaints() {
   const [comments, setComments] = useState([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [commentFile, setCommentFile] = useState(null);
+  const fileInputRef = useRef(null);
+  const [replyTo, setReplyTo] = useState(null); // parent comment id
   const [commentBusy, setCommentBusy] = useState(false);
 
   useEffect(() => {
     let mounted = true;
     api("/complaints", { token })
-      .then((data) => mounted && setItems(data))
+      .then((data) => {
+        if (!mounted) return;
+        setItems(data);
+        // Default location filter to user's registered location if available
+        if (user?.location) {
+          setLocationFilter((user.location || "").trim().toLowerCase());
+        }
+      })
       .finally(() => mounted && setLoading(false));
     return () => (mounted = false);
   }, [token]);
+
+  // Load registered user locations for admins (to mirror User Management filters)
+  useEffect(() => {
+    let mounted = true;
+    const run = async () => {
+      try {
+        if (user?.role !== "admin") return; // listing users is admin-only
+        const list = await api("/users", { token });
+        if (!mounted) return;
+        const locs = Array.from(
+          new Set(
+            (list || [])
+              .map((u) => (u.location || "").trim())
+              .filter(Boolean)
+              .map((s) => s.toLowerCase())
+          )
+        ).sort();
+        setUserLocations(locs);
+      } catch {
+        // ignore if not allowed
+      }
+    };
+    run();
+    return () => {
+      mounted = false;
+    };
+  }, [token, user?.role]);
 
   useEffect(() => setPhotoIndex(0), [selected?._id]);
 
@@ -41,8 +82,8 @@ export default function Complaints() {
   };
 
   const canDelete = (c) => user && c && String(c.user_id) === String(user.id);
-  const canUpdateStatus = () =>
-    user && (user.role === "admin" || user.role === "volunteer");
+  // In the general view, only admins can change status
+  const canUpdateStatus = () => user && user.role === "admin";
 
   const updateStatus = async (c, nextStatus) => {
     if (!c || !nextStatus) return;
@@ -129,7 +170,7 @@ export default function Complaints() {
     setComments([]);
     setCommentsLoading(true);
     try {
-      const list = await api(`/comments/${c._id}`, { token });
+      const list = await fetchComments(c._id, token);
       setComments(Array.isArray(list) ? list : []);
     } catch {
     } finally {
@@ -139,16 +180,22 @@ export default function Complaints() {
 
   const submitComment = async () => {
     const content = (commentText || "").trim();
-    if (!selected || !content) return;
+    if (!selected || (!content && !commentFile)) return;
     try {
       setCommentBusy(true);
-      const created = await api(`/comments/${selected._id}`, {
-        method: "POST",
+      const created = await postComment({
+        complaintId: selected._id,
         token,
-        body: { content },
+        content,
+        parentId: replyTo,
+        file: commentFile,
       });
       setComments((prev) => [...prev, created]);
       setCommentText("");
+      setCommentFile(null);
+      // clear native file input element if present
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setReplyTo(null);
       setSummaries((prev) => {
         const s = prev[selected._id] || { up: 0, down: 0, comments: 0 };
         return {
@@ -160,6 +207,51 @@ export default function Complaints() {
       alert(e.message);
     } finally {
       setCommentBusy(false);
+    }
+  };
+
+  const toggleReact = async (comment, type) => {
+    if (!comment) return;
+    try {
+      const currentLike = comment.myLike;
+      const currentDislike = comment.myDislike;
+      const nextAction =
+        type === "like"
+          ? currentLike
+            ? null
+            : "like"
+          : currentDislike
+          ? null
+          : "dislike";
+      await reactComment(comment._id, nextAction, token);
+      setComments((prev) =>
+        prev.map((c) => {
+          if (c._id !== comment._id) return c;
+          let likeCount = c.likeCount || 0;
+          let dislikeCount = c.dislikeCount || 0;
+          let myLike = c.myLike || false;
+          let myDislike = c.myDislike || false;
+          // remove previous
+          if (myLike) likeCount = Math.max(0, likeCount - 1);
+          if (myDislike) dislikeCount = Math.max(0, dislikeCount - 1);
+          // apply new
+          if (nextAction === "like") {
+            likeCount += 1;
+            myLike = true;
+            myDislike = false;
+          } else if (nextAction === "dislike") {
+            dislikeCount += 1;
+            myLike = false;
+            myDislike = true;
+          } else {
+            myLike = false;
+            myDislike = false;
+          }
+          return { ...c, likeCount, dislikeCount, myLike, myDislike };
+        })
+      );
+    } catch (e) {
+      /* ignore temporary errors */
     }
   };
 
@@ -207,14 +299,154 @@ export default function Complaints() {
     return 0;
   };
 
+  // Helpers: get city-like token from address and classify complaint category
+  const cityFromAddress = (addr = "") => {
+    const s = (addr || "").trim();
+    if (!s) return "";
+    const parts = s
+      .split(",")
+      .map((p) => p.trim())
+      .filter(Boolean);
+    const last = parts.length ? parts[parts.length - 1] : s;
+    // normalize
+    return last.toLowerCase();
+  };
+
+  const CATEGORY_PATTERNS = [
+    {
+      key: "illegal_parking",
+      label: "Illegal parking",
+      patterns: [
+        /illegal\s*parking|no\s*parking|double\s*parking|encroach(ed|ment).*parking|vehicle\s*blocking|blocked\s*road.*(car|bike)/i,
+      ],
+    },
+    {
+      key: "water_logging",
+      label: "Water logging",
+      patterns: [
+        /water\s*logging|waterlogging|standing\s*water|water\s*stagnant|flood(ed)?|drainage\s*blocked/i,
+      ],
+    },
+    {
+      key: "garbage",
+      label: "Garbage",
+      patterns: [
+        /garbage|trash|litter|waste|dumping|dumped|dustbin|bin\s*overflow|unclean|filth/i,
+      ],
+    },
+    {
+      key: "pothole",
+      label: "Pothole",
+      patterns: [
+        /pothole|road\s*hole|uneven\s*road|crater|broken\s*road|damaged\s*road/i,
+      ],
+    },
+    {
+      key: "light",
+      label: "Light",
+      patterns: [
+        /street\s?light|streetlight|lamp|lighting|light\s*(out|down|broken)|bulb|pole\s*light/i,
+      ],
+    },
+  ];
+
+  const classifyType = (c) => {
+    const text = `${c?.title || ""} ${c?.description || ""}`;
+    for (const cat of CATEGORY_PATTERNS) {
+      if (cat.patterns.some((rx) => rx.test(text))) return cat.label;
+    }
+    return "Other";
+  };
+
+  const userLocNorm = (user?.location || "").trim().toLowerCase();
+  const fallbackLocs = Array.from(
+    new Set(items.map((it) => cityFromAddress(it.address)).filter(Boolean))
+  );
+  const baseLocs =
+    userLocations && userLocations.length ? userLocations : fallbackLocs;
+  const distinctLocations = Array.from(
+    new Set([...baseLocs, ...(userLocNorm ? [userLocNorm] : [])])
+  ).sort();
+  const distinctTypes = Array.from(
+    new Set(items.map((it) => classifyType(it)).filter(Boolean))
+  ).sort((a, b) =>
+    a === "Other" ? 1 : b === "Other" ? -1 : a.localeCompare(b)
+  );
+
+  const filteredItems = items.filter((c) => {
+    const city = cityFromAddress(c.address);
+    const type = classifyType(c);
+    const okLoc = locationFilter === "all" ? true : city === locationFilter;
+    const okType = typeFilter === "all" ? true : type === typeFilter;
+    return okLoc && okType;
+  });
+
   return (
     <section className="max-w-6xl mx-auto px-3 py-5">
-      <h1 className="text-xl font-semibold mb-4">All Complaints</h1>
+      <div className="flex items-center justify-between gap-3 mb-3">
+        <h1 className="text-xl font-semibold">All Complaints</h1>
+        {/* Filters on the right */}
+        <div className="flex flex-wrap items-center gap-3 text-sm">
+          <div className="text-gray-600 flex items-center gap-2">
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              stroke="currentColor"
+              fill="none"
+              strokeWidth="2"
+            >
+              <path
+                d="M3 4h18l-7 8v6l-4 2v-8L3 4z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="inline-block">Filters:</span>
+          </div>
+          {/* Location */}
+          <select
+            className="px-3 py-2 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            value={locationFilter}
+            onChange={(e) => setLocationFilter(e.target.value)}
+          >
+            <option value="all">All Locations</option>
+            {distinctLocations.map((loc) => (
+              <option key={loc} value={loc}>
+                {loc.charAt(0).toUpperCase() + loc.slice(1)}
+              </option>
+            ))}
+          </select>
+          {/* Type */}
+          <select
+            className="px-3 py-2 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+          >
+            <option value="all">All Assignments</option>
+            {distinctTypes.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={() => {
+              setLocationFilter("all");
+              setTypeFilter("all");
+            }}
+            className="text-indigo-600 hover:underline"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </div>
       {loading ? (
         <p>Loading...</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {items.map((c) => {
+          {filteredItems.map((c) => {
             const s = summaries[c._id] || { up: 0, down: 0, comments: 0 };
             const progress = progressFromStatus(c.status);
             return (
@@ -328,11 +560,95 @@ export default function Complaints() {
             className="bg-white rounded-xl shadow-lg w-full max-w-md max-h-[90vh] flex flex-col"
           >
             {selected.photos && selected.photos.length > 0 && (
-              <img
-                src={selected.photos[photoIndex]}
-                alt="complaint"
-                className="w-full h-44 object-contain"
-              />
+              <div className="relative w-full h-56 bg-gray-50 flex items-center justify-center">
+                <img
+                  src={selected.photos[photoIndex]}
+                  alt="complaint"
+                  className="max-h-full max-w-full object-contain"
+                />
+                {selected.photos.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border border-gray-200 rounded-full w-8 h-8 flex items-center justify-center shadow"
+                      onClick={() =>
+                        setPhotoIndex(
+                          (i) =>
+                            (i - 1 + selected.photos.length) %
+                            selected.photos.length
+                        )
+                      }
+                      aria-label="Previous image"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="18"
+                        height="18"
+                        stroke="currentColor"
+                        fill="none"
+                        strokeWidth="2"
+                      >
+                        <path
+                          d="M15 18l-6-6 6-6"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border border-gray-200 rounded-full w-8 h-8 flex items-center justify-center shadow"
+                      onClick={() =>
+                        setPhotoIndex((i) => (i + 1) % selected.photos.length)
+                      }
+                      aria-label="Next image"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="18"
+                        height="18"
+                        stroke="currentColor"
+                        fill="none"
+                        strokeWidth="2"
+                      >
+                        <path
+                          d="M9 6l6 6-6 6"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[11px] px-2 py-0.5 rounded bg-black/60 text-white">
+                      {photoIndex + 1} / {selected.photos.length}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+            {selected.photos && selected.photos.length > 1 && (
+              <div className="px-3 py-2 border-b border-gray-100">
+                <div className="flex items-center gap-2 overflow-x-auto">
+                  {selected.photos.map((url, idx) => (
+                    <button
+                      key={url + idx}
+                      type="button"
+                      className={`flex-shrink-0 w-16 h-12 rounded border ${
+                        idx === photoIndex
+                          ? "border-blue-500 ring-2 ring-blue-200"
+                          : "border-gray-200"
+                      } bg-white overflow-hidden`}
+                      onClick={() => setPhotoIndex(idx)}
+                      aria-label={`Show image ${idx + 1}`}
+                    >
+                      <img
+                        src={url}
+                        alt="thumb"
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
             <div className="p-4 flex-1 overflow-y-auto space-y-3">
               <h2 className="text-lg font-semibold">{selected.title}</h2>
@@ -364,43 +680,120 @@ export default function Complaints() {
                 ) : comments.length === 0 ? (
                   <p className="text-xs text-gray-500">No comments yet.</p>
                 ) : (
-                  <ul className="space-y-2 max-h-40 overflow-y-auto">
+                  <ul className="space-y-3 max-h-64 overflow-y-auto pr-1">
                     {comments.map((com) => (
-                      <li key={com._id} className="border-b pb-1">
-                        <div className="flex justify-between items-center">
-                          <p className="text-xs text-gray-700">{com.content}</p>
-                          {canDeleteComment(com) && (
-                            <button
-                              onClick={() => removeComment(com)}
-                              disabled={commentBusy}
-                              className="text-[10px] text-red-500 hover:underline"
-                            >
-                              Delete
-                            </button>
-                          )}
+                      <li
+                        key={com._id}
+                        className={`rounded-lg border border-gray-200 bg-gray-50 p-3 ${
+                          com.parent_id ? "ml-8" : ""
+                        }`}
+                      >
+                        <div className="flex items-start gap-2">
+                          <div className="w-7 h-7 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-[10px] font-semibold">
+                            {com.author?.name
+                              ? com.author.name.slice(0, 2).toUpperCase()
+                              : "US"}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <div className="text-xs font-semibold">
+                                {com.author?.name || "User"}
+                              </div>
+                              <div className="text-[10px] text-gray-400">
+                                {timeAgo(com.created_at)}
+                              </div>
+                            </div>
+                            {com.content && (
+                              <p className="text-xs text-gray-700 mt-0.5 whitespace-pre-wrap">
+                                {com.content}
+                              </p>
+                            )}
+                            {com.photo_url && (
+                              <div className="mt-2">
+                                <img
+                                  src={com.photo_url}
+                                  alt="comment"
+                                  className="max-h-48 rounded-md border border-gray-200"
+                                />
+                              </div>
+                            )}
+                            <div className="mt-2 flex items-center gap-4 text-[11px] text-gray-600">
+                              <button
+                                onClick={() => toggleReact(com, "like")}
+                                className={`inline-flex items-center gap-1 ${
+                                  com.myLike ? "text-gray-900 font-medium" : ""
+                                }`}
+                              >
+                                👍 <span>{com.likeCount || 0}</span>
+                              </button>
+                              <button
+                                onClick={() => toggleReact(com, "dislike")}
+                                className={`inline-flex items-center gap-1 ${
+                                  com.myDislike
+                                    ? "text-gray-900 font-medium"
+                                    : ""
+                                }`}
+                              >
+                                👎 <span>{com.dislikeCount || 0}</span>
+                              </button>
+                              <button
+                                onClick={() => setReplyTo(com._id)}
+                                className="hover:underline"
+                              >
+                                Reply
+                              </button>
+                              {canDeleteComment(com) && (
+                                <button
+                                  onClick={() => removeComment(com)}
+                                  className="text-red-500 hover:underline"
+                                >
+                                  Delete
+                                </button>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                        <p className="text-[10px] text-gray-400">
-                          {timeAgo(com.created_at)}
-                        </p>
                       </li>
                     ))}
                   </ul>
                 )}
-                <div className="mt-2 flex items-center gap-2">
-                  <input
-                    type="text"
-                    className="flex-1 border rounded px-2 py-1 text-xs"
-                    placeholder="Add a comment..."
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                  />
-                  <button
-                    className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50"
-                    onClick={submitComment}
-                    disabled={commentBusy}
-                  >
-                    Post
-                  </button>
+                <div className="mt-3">
+                  {replyTo && (
+                    <div className="mb-2 text-[11px] text-gray-600">
+                      Replying to a comment •{" "}
+                      <button
+                        className="underline"
+                        onClick={() => setReplyTo(null)}
+                      >
+                        cancel
+                      </button>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      className="flex-1 border rounded px-2 py-2 text-xs"
+                      placeholder="Add a comment..."
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                    />
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        setCommentFile(e.target.files?.[0] || null)
+                      }
+                      className="text-[10px]"
+                    />
+                    <button
+                      className="px-3 py-2 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700 disabled:opacity-50"
+                      onClick={submitComment}
+                      disabled={commentBusy}
+                    >
+                      Post
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

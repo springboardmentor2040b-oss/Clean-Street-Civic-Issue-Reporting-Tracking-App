@@ -16,3 +16,30 @@ export async function api(path, { method = 'GET', body, token } = {}) {
   }
   return res.json()
 }
+
+// Admin logs fetch
+export async function fetchAdminLogs(token) {
+  return api('/admin-logs', { token })
+}
+
+// Recent updates (logs) for all authenticated users
+export async function fetchRecentUpdates(token) {
+  return api('/admin-logs/recent', { token })
+}
+
+// Comments API helpers
+export async function fetchComments(complaintId, token) {
+  return api(`/comments/${complaintId}`, { token })
+}
+
+export async function postComment({ complaintId, token, content, parentId, file }) {
+  const fd = new FormData()
+  if (content) fd.append('content', content)
+  if (parentId) fd.append('parent_id', parentId)
+  if (file) fd.append('photo', file)
+  return api(`/comments/${complaintId}`, { method: 'POST', body: fd, token })
+}
+
+export async function reactComment(commentId, action, token) {
+  return api(`/comments/${commentId}/react`, { method: 'PATCH', body: { action }, token })
+}
