@@ -392,9 +392,9 @@ const AdminDashboard = () => {
            
                    <div className="bg-white rounded-xl shadow p-4">
   <h2 className="text-xl font-semibold mb-3">Recent Activities</h2>
-  <ul className="space-y-2">
+  <ul className="space-y-2 ">
     {activities.map((log) => (
-      <li key={log._id} className="border-b pb-2">
+      <li key={log._id} className=" rounded-lg hover:bg-gray-100   px-2 py-3">
         <span className="font-medium text-gray-800">{log.user_id?.name || "Unknown Admin"}</span>
         {" "}- {log.action}
         <div className="text-xs text-gray-500">
