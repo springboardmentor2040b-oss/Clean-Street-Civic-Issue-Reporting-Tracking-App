@@ -5,6 +5,7 @@ import {
   updateUserRoleAdmin,
   updateComplaintStatusAdmin,
   getAdminStats,
+  getDetailedStats,
 } from "../controller/admin.controller.js";
 
 import { getAllAdminLogs, recordAdminLog } from "../controller/adminLog.controller.js";
@@ -49,6 +50,13 @@ router.patch("/complaints/:complaintId/status", authorize("admin"), updateCompla
  * @access  Private (Admin only)
  */
 router.get("/stats", authorize("admin"), getAdminStats);
+
+/**
+ * @route   GET /api/admin/detailed-stats
+ * @desc    Get detailed statistics for charts and graphs
+ * @access  Private (Admin only)
+ */
+router.get("/detailed-stats", authorize("admin"), getDetailedStats);
 
 /**
  * @route   GET /api/admin/logs

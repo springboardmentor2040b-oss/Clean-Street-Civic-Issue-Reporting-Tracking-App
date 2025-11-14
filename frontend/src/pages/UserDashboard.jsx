@@ -154,7 +154,7 @@ const UserDashboard = () => {
       <>
         <Navbar />
         <Toaster position="bottom-center" reverseOrder={false} />
-        <div className="min-h-[calc(100vh-theme(space.20))] flex items-center justify-center bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+        <div className="min-h-[calc(100vh-theme(space.20))] bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex items-center justify-center transition-colors duration-300">
           <div className="text-center">
             <svg
               className="animate-spin mx-auto h-12 w-12 text-indigo-600"
@@ -178,7 +178,7 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex flex-col transition-colors duration-300">
       <Toaster position="bottom-center" reverseOrder={false} />
       <Navbar />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 flex-grow">
@@ -206,6 +206,9 @@ const UserDashboard = () => {
               <StatCard icon={<FaCheckCircle className="text-green-500" />} value={dashboardData.stats.resolvedReports} label="Resolved" />
             </section>
 
+            {/* === Complaint Status Log Section === */}
+
+
             {/* === Recent Updates Section === */}
             <section className="mb-12">
               <div className="flex justify-between items-center mb-6">
@@ -218,7 +221,7 @@ const UserDashboard = () => {
                   <p className="text-gray-500 text-sm">No recent updates from admin yet.</p>
                 </div>
               ) : (
-                <ul className="bg-white rounded-xl shadow border border-gray-100 divide-y divide-gray-200">
+                <ul className="bg-white rounded-xl shadow">
                   {activities.map((log) => (
                     <li key={log._id} className="p-4 hover:bg-gray-50 transition-colors">
                       <div className="flex justify-between items-start">
@@ -230,6 +233,65 @@ const UserDashboard = () => {
                     </li>
                   ))}
                 </ul>
+              )}
+            </section>
+
+            <section className="mb-12">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-semibold text-gray-700 flex items-center gap-2">
+                  <FaClipboardList className="text-indigo-500" /> Complaint Status Log
+                </h2>
+              </div>
+              {dashboardData.complaints.length === 0 ? (
+                <div className="bg-white rounded-xl shadow border border-gray-100 p-6 text-center">
+                  <p className="text-gray-500 text-sm">No complaints to display status for.</p>
+                </div>
+              ) : (
+                <div className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+                  <div className="divide-y divide-gray-100">
+                    {dashboardData.complaints.slice(0, 5).map((complaint) => {
+                      const statusText = 
+                        complaint.status === "resolved" ? "Resolved" :
+                        complaint.status === "in_review" ? "In Review" :
+                        complaint.status === "rejected" ? "Rejected" :
+                        "Pending";
+                      
+                      const statusColor = 
+                        complaint.status === "resolved" ? "text-green-600" :
+                        complaint.status === "in_review" ? "text-blue-600" :
+                        complaint.status === "rejected" ? "text-red-600" :
+                        "text-yellow-600";
+
+                      return (
+                        <div key={complaint._id} className="p-5 hover:bg-gray-50 transition-colors">
+                          <div className="flex items-start justify-between gap-3 mb-2">
+                            <div className="flex-grow min-w-0">
+                              <p className="text-xs text-gray-500 mb-1">
+                                {formatDate(complaint.updatedAt)} at {new Date(complaint.updatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                              </p>
+                              <p className="text-sm text-gray-800">
+                                Complaint <span className="font-semibold text-gray-900">"{complaint.title}"</span> status changed to <span className={`font-semibold ${statusColor}`}>{statusText}</span>
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Type: {complaint.type} • Priority: {complaint.priority} • Reported: {formatDate(complaint.createdAt)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {dashboardData.complaints.length > 5 && (
+                    <div className="bg-gray-50 px-6 py-3 text-center border-t border-gray-200">
+                      <button
+                        onClick={() => setShowAllReports(true)}
+                        className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 hover:underline transition-colors"
+                      >
+                        View All {dashboardData.complaints.length} Reports
+                      </button>
+                    </div>
+                  )}
+                </div>
               )}
             </section>
 

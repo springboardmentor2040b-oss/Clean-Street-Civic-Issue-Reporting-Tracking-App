@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { FiArrowLeft, FiUpload, FiXCircle, FiMapPin, FiInfo, FiImage, FiLoader, FiCheckCircle, FiAlertCircle } from "react-icons/fi"; // Replaced Fa with Fi
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { useTheme } from "../context/ThemeContext";
 
 // Marker icon setup (Keep original)
 const markerIcon = new L.Icon({
@@ -45,6 +46,7 @@ const FormStatus = ({ message, type }) => {
 
 const ReportIssue = () => {
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
   const [position, setPosition] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null); // State for image preview URL
@@ -134,7 +136,7 @@ const backend_Url = import.meta.env.VITE_BACKEND_URL || "http://localhost:3002";
 
   return (
     // === STYLE UPDATE: Consistent gradient background ===
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex flex-col transition-colors duration-300">
       <Navbar />
       {/* === STYLE UPDATE: Adjusted padding === */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 flex-grow">
@@ -153,11 +155,11 @@ const backend_Url = import.meta.env.VITE_BACKEND_URL || "http://localhost:3002";
 
         {/* Main Content Card */}
         {/* === STYLE UPDATE: Card styling, subtle animation === */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 sm:p-10 animate-fade-in-up">
+        <div className="card-theme rounded-xl shadow-lg p-6 sm:p-10 animate-fade-in-up">
             {/* Header */}
             <div className="text-center mb-10">
-                <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 tracking-tight">Report an Issue</h1>
-                <p className="text-gray-500 mt-2 text-base">Help improve our community by reporting problems.</p>
+                <h1 className="text-3xl sm:text-4xl font-bold text-theme-primary tracking-tight">Report an Issue</h1>
+                <p className="text-theme-secondary mt-2 text-base">Help improve our community by reporting problems.</p>
             </div>
 
             {/* Form */}
@@ -167,7 +169,7 @@ const backend_Url = import.meta.env.VITE_BACKEND_URL || "http://localhost:3002";
                 <div className="space-y-6"> {/* Reduced space-y-8 to space-y-6 */}
                     {/* Issue Details Section */}
                     <div>
-                        <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2"><FiInfo className="text-indigo-500" /> Issue Details</h2>
+                        <h2 className="text-lg font-semibold text-theme-primary mb-4 flex items-center gap-2"><FiInfo className="text-theme-accent" /> Issue Details</h2>
                         <div className="space-y-5"> {/* Reduced space-y-6 to space-y-5 */}
                             <InputField label="Issue Title" name="title" value={form.title} onChange={handleChange} placeholder="e.g., Overflowing bin on Park Ave" required />
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -183,7 +185,7 @@ const backend_Url = import.meta.env.VITE_BACKEND_URL || "http://localhost:3002";
                     {/* Photo Upload Section */}
                     {/* === STYLE UPDATE: Enhanced upload area styling === */}
                     <div>
-                      <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2"><FiImage className="text-indigo-500"/> Attach Photo (Optional)</h2>
+                      <h2 className="text-lg font-semibold text-theme-primary mb-4 flex items-center gap-2"><FiImage className="text-theme-accent"/> Attach Photo (Optional)</h2>
                       <div className={`mt-1 flex flex-col justify-center items-center px-6 py-8 border-2 border-gray-300 border-dashed rounded-lg transition-colors duration-200 ${previewUrl ? 'bg-gray-50' : 'bg-gray-50 hover:border-indigo-400 hover:bg-indigo-50/30'}`}>
                         {previewUrl ? (
                           <div className="relative group text-center w-full max-w-xs mx-auto">
@@ -212,7 +214,7 @@ const backend_Url = import.meta.env.VITE_BACKEND_URL || "http://localhost:3002";
 
                 {/* Right Column: Map */}
                 <div className="mt-8 lg:mt-0">
-                  <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2"><FiMapPin className="text-indigo-500" /> Pinpoint Location*</h2>
+                  <h2 className="text-lg font-semibold text-theme-primary mb-4 flex items-center gap-2"><FiMapPin className="text-theme-accent" /> Pinpoint Location*</h2>
                   {/* === STYLE UPDATE: Cleaner map container === */}
                   <div className="h-96 w-full rounded-lg overflow-hidden border border-gray-200 shadow-sm relative">
                     {position ? (
@@ -262,26 +264,26 @@ const backend_Url = import.meta.env.VITE_BACKEND_URL || "http://localhost:3002";
 // === STYLE UPDATE: Consistent input styling ===
 const InputField = ({ label, name, required, ...props }) => (
   <div>
-    <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1.5">
+    <label htmlFor={name} className="block text-sm font-medium text-theme-primary mb-1.5">
         {label} {required && <span className="text-red-500">*</span>}
     </label>
     <input
         id={name} name={name} required={required}
         {...props}
-        className="w-full border border-gray-300 rounded-md p-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 placeholder-gray-400"
+        className="input-theme w-full rounded-md p-2.5 text-sm shadow-sm transition duration-200"
     />
   </div>
 );
 
 const SelectField = ({ label, name, options, required, ...props }) => (
   <div>
-    <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1.5">
+    <label htmlFor={name} className="block text-sm font-medium text-theme-primary mb-1.5">
         {label} {required && <span className="text-red-500">*</span>}
     </label>
     <select
         id={name} name={name} required={required}
         {...props}
-        className="w-full border border-gray-300 rounded-md p-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 bg-white appearance-none" // Added appearance-none
+        className="input-theme w-full rounded-md p-2.5 text-sm shadow-sm transition duration-200 appearance-none"
     >
       <option value="">-- Select --</option>
       {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -291,14 +293,14 @@ const SelectField = ({ label, name, options, required, ...props }) => (
 
 const TextareaField = ({ label, name, required, ...props }) => (
   <div>
-    <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1.5">
+    <label htmlFor={name} className="block text-sm font-medium text-theme-primary mb-1.5">
         {label} {required && <span className="text-red-500">*</span>}
     </label>
     <textarea
         id={name} name={name} required={required}
         {...props}
         rows="4"
-        className="w-full border border-gray-300 rounded-md p-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 placeholder-gray-400 resize-vertical" // Added resize-vertical
+        className="input-theme w-full rounded-md p-2.5 text-sm shadow-sm transition duration-200 resize-vertical"
     ></textarea>
   </div>
 );

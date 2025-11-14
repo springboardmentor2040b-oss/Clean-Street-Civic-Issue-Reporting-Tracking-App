@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { FiUser, FiMail, FiMapPin, FiLock, FiCamera, FiEdit3, FiSave, FiShield, FiX, FiEye, FiEyeOff, FiLoader, FiCheckCircle, FiAlertCircle, FiUserCheck } from "react-icons/fi";
+import { useTheme } from "../context/ThemeContext";
 
 const FormMessage = ({ type, message }) => {
     if (!message) return null;
@@ -19,6 +20,7 @@ const backend_Url = import.meta.env.VITE_BACKEND_URL || "http://localhost:3002";
 
 export default function Profilepage() {
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", location: "" });
@@ -130,14 +132,18 @@ export default function Profilepage() {
 
   if (!user) {
      return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${
+          isDarkMode ? 'bg-black' : 'bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50'
+        }`}>
             <FiLoader className="animate-spin text-4xl text-indigo-600"/>
         </div>
       );
    }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex flex-col">
+    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${
+      isDarkMode ? 'bg-black' : 'bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50'
+    }`}>
       <Navbar />
       <main className="container mx-auto pt-10 pb-16 px-4 sm:px-6 lg:px-8 flex-grow">
 
@@ -149,7 +155,9 @@ export default function Profilepage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
 
           <div className="lg:col-span-4 animate-fade-in-up animation-delay-200">
-            <div className="bg-white p-6 sm:p-8 rounded-xl shadow border border-gray-100 text-center flex flex-col items-center sticky top-28">
+            <div className={`p-6 sm:p-8 rounded-xl shadow border text-center flex flex-col items-center sticky top-28 ${
+              isDarkMode ? 'bg-[#001D3D] border-[#003566]' : 'bg-white border-gray-100'
+            }`}>
               <div className="relative mb-4 group">
                 <div className="relative w-28 h-28 rounded-full p-1 bg-gradient-to-br from-blue-400 to-indigo-500 shadow-md">
                     {previewUrl ?
@@ -184,7 +192,9 @@ export default function Profilepage() {
           </div>
 
           <div className="lg:col-span-8 animate-fade-in-up animation-delay-300">
-            <div className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+            <div className={`rounded-xl shadow border overflow-hidden ${
+              isDarkMode ? 'bg-[#001D3D] border-[#003566]' : 'bg-white border-gray-100'
+            }`}>
               <div className="border-b border-gray-200 bg-gray-50/50">
                 <nav className="flex space-x-1 px-4 sm:px-6 pt-1">
                   <TabButton id="personal" activeTab={activeTab} setActiveTab={setActiveTab} icon={<FiUser />}>Personal Details</TabButton>

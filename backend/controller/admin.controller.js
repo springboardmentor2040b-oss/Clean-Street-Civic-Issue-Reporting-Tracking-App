@@ -12,7 +12,7 @@ export const getAllComplaintsAdmin = async (req, res) => {
   try {
     const complaints = await Complaint.find({})
       .sort({ createdAt: -1 })
-      .populate('user_id', 'name email') // User who reported
+      .populate('user_id', 'name email location') // User who reported - include location
       .populate('assigned_to', 'name email'); // User assigned (volunteer/admin)
 
     res.status(200).json({ success: true, count: complaints.length, data: complaints });
@@ -152,10 +152,146 @@ export const updateComplaintStatusAdmin = async (req, res) => {
     console.error("Error updating complaint status:", error);
     res.status(500).json({ message: "Server error updating complaint status." });
   }
+};
 
-  
+/**
+ * @desc    Get detailed statistics for charts and graphs
+ * @route   GET /api/admin/detailed-stats
+ * @access  Private (Admin only)
+ */
+export const getDetailedStats = async (req, res) => {
+  try {
+    // Complaint status distribution
+    const complaintsByStatus = await Complaint.aggregate([
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
 
+    // Complaint type distribution
+    const complaintsByType = await Complaint.aggregate([
+      {
+        $group: {
+          _id: "$type",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
 
+    // User role distribution
+    const usersByRole = await User.aggregate([
+      {
+        $group: {
+          _id: "$role",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    // Complaints over time (last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const complaintsOverTime = await Complaint.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: sevenDaysAgo }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 }
+      }
+    ]);
+
+    // Monthly complaint trends (last 6 months)
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const monthlyComplaints = await Complaint.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: sixMonthsAgo }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m", date: "$createdAt" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 }
+      }
+    ]);
+
+    // User registration over time (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const userRegistrations = await User.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: thirtyDaysAgo }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 }
+      }
+    ]);
+
+    // Top complaint types
+    const topComplaintTypes = await Complaint.aggregate([
+      {
+        $group: {
+          _id: "$type",
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { count: -1 }
+      },
+      {
+        $limit: 5
+      }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        complaintsByStatus,
+        complaintsByType,
+        usersByRole,
+        complaintsOverTime,
+        monthlyComplaints,
+        userRegistrations,
+        topComplaintTypes
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching detailed stats:", error);
+    res.status(500).json({ message: "Server error fetching detailed statistics." });
+  }
 };
 
 // Add other admin functions here later (e.g., delete user, generate reports)

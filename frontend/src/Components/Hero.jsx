@@ -3,11 +3,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowRight, FiMapPin, FiUsers, FiClock } from 'react-icons/fi'; // Updated icons for relevance
+import { useTheme } from '../context/ThemeContext';
 
 const Hero = () => {
+    const { isDarkMode } = useTheme();
+    
     return (
         // === STYLE UPDATE: Added bg-gradient-to-b, adjusted padding ===
-        <div className="relative min-h-screen flex items-center justify-center pt-24 pb-20 overflow-hidden bg-gradient-to-b from-blue-50 via-gray-50 to-white">
+        <div className={`relative min-h-screen flex items-center justify-center pt-24 pb-20 overflow-hidden transition-colors duration-300 ${
+            isDarkMode 
+                ? 'bg-gradient-to-b from-black via-black to-black' 
+                : 'bg-gradient-to-b from-blue-50 via-gray-50 to-white'
+        }`}>
 
             {/* Background Image Container */}
             <div className="absolute inset-0 w-full h-full">
@@ -33,14 +40,22 @@ const Hero = () => {
                         Report street issues easily, track their resolution, and collaborate with your community for a better neighborhood. Your action matters.
                     </p>
 
-                     {/* Call to Action Button */}
-                     {/* === STYLE UPDATE: Refined button style, hover effect === */}
+                     {/* === === === === === === === === === === === === */}
+                     {/* === BUTTON REMOVED AS REQUESTED === */}
+                     {/*
                      <Link
                         to="/register"
-                        className="mt-10 inline-flex items-center gap-2.5 px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-base font-semibold rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 animate-fade-in-up delay-400"
+                        className={`mt-10 inline-flex items-center gap-2.5 px-8 py-3 text-base font-semibold rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-opacity-50 animate-fade-in-up delay-400 ${
+                            isDarkMode
+                                ? 'bg-[#FFC300] text-black hover:bg-[#FFD60A] focus:ring-[#FFC300]'
+                                : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white focus:ring-blue-300'
+                        }`}
                     >
-                        Get Started <FiArrowRight className="ml-1 text-blue-200" size={18} />
+                        Get Started <FiArrowRight className={`ml-1 ${isDarkMode ? 'text-black' : 'text-blue-200'}`} size={18} />
                     </Link>
+                    */}
+                    {/* === === === === === === === === === === === === */}
+
                 </div>
 
                 {/* Feature Cards Section */}
@@ -52,18 +67,21 @@ const Hero = () => {
                         title="Precise Reporting"
                         description="Easily report issues using map integration and photo uploads for accurate location and details."
                         delay="300"
+                        isDarkMode={isDarkMode}
                     />
                     <FeatureCard
                         icon={<FiUsers size={32} className="text-green-500"/>} // Using icon component
                         title="Community Driven"
                         description="Engage with fellow citizens, volunteers, and officials on a unified platform for collective action."
                         delay="500"
+                        isDarkMode={isDarkMode}
                     />
                     <FeatureCard
                         icon={<FiClock size={32} className="text-orange-500"/>} // Using icon component
                         title="Track Progress"
                         description="Receive real-time updates and monitor the status of reported issues directly from your dashboard."
                         delay="700"
+                        isDarkMode={isDarkMode}
                     />
                 </div>
             </div>
@@ -73,18 +91,26 @@ const Hero = () => {
 
 // Feature Card Component
 // === STYLE UPDATE: Refined card styling, added border, hover effect ===
-const FeatureCard = ({ icon, title, description, delay }) => (
+const FeatureCard = ({ icon, title, description, delay, isDarkMode }) => (
     <div
-        className={`bg-white/80 backdrop-blur-md border border-gray-200/50 text-gray-800 p-6 rounded-xl shadow-lg transition-all duration-300 ease-out transform hover:-translate-y-2 hover:shadow-xl hover:border-blue-200 animate-fade-in-up animation-delay-${delay}`}
+        className={`backdrop-blur-md border p-6 rounded-xl shadow-lg transition-all duration-300 ease-out transform hover:-translate-y-2 hover:shadow-xl animate-fade-in-up animation-delay-${delay} ${
+            isDarkMode
+                ? 'bg-[#001D3D]/80 border-[#003566]/50 text-white hover:border-[#FFC300]'
+                : 'bg-white/80 border-gray-200/50 text-gray-800 hover:border-blue-200'
+        }`}
         style={{ animationDelay: `${parseInt(delay)}ms` }} // Ensure animation delay works
     >
         <div className="flex flex-col items-center text-center">
             {/* Render icon component directly */}
-            <div className="mb-4 p-3 bg-gradient-to-br from-gray-100 to-blue-100 rounded-full shadow-inner border border-white/50">
+            <div className={`mb-4 p-3 rounded-full shadow-inner border ${
+                isDarkMode
+                    ? 'bg-gradient-to-br from-[#003566] to-[#001D3D] border-[#FFC300]/30'
+                    : 'bg-gradient-to-br from-gray-100 to-blue-100 border-white/50'
+            }`}>
                  {icon}
             </div>
-            <h3 className="text-lg font-semibold mb-2 text-gray-900">{title}</h3>
-            <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
+            <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
+            <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{description}</p>
         </div>
     </div>
 );

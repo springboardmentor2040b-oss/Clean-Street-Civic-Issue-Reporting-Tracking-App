@@ -176,7 +176,7 @@ const VolunteerDashboard = () => {
   const getStatusBadge = (status) => {
     const styles = {
       received: "bg-yellow-100 text-yellow-800 border border-yellow-200",
-      in_review: "bg-blue-100 text-blue-800 border border-blue-200",
+      in_review: "bg-blue-600 text-white border border-blue-600",
       resolved: "bg-green-100 text-green-800 border border-green-200",
       rejected: "bg-red-100 text-red-800 border border-red-200",
     };
@@ -223,7 +223,7 @@ const VolunteerDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex flex-col transition-colors duration-300">
         <Toaster position="top-right" reverseOrder={false} />
         <Navbar />
         <div className="flex-grow flex items-center justify-center">
@@ -258,7 +258,7 @@ const VolunteerDashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex flex-col transition-colors duration-300">
         <Toaster position="top-right" reverseOrder={false} />
         <Navbar />
         <div className="flex-grow flex items-center justify-center p-4">
@@ -280,7 +280,7 @@ const VolunteerDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex flex-col transition-colors duration-300">
       <Toaster position="top-right" reverseOrder={false} />
       <Navbar />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 flex-grow">
@@ -311,7 +311,7 @@ const VolunteerDashboard = () => {
                 <p className="text-gray-500 text-sm">No recent updates from admin yet.</p>
               </div>
             ) : (
-              <ul className="bg-white rounded-xl shadow border border-gray-100 divide-y divide-gray-200">
+              <ul className="bg-white rounded-xl shadow border border-gray-100">
                 {activities.map((log) => (
                   <li key={log._id} className="p-4 hover:bg-gray-50 transition-colors">
                     <div className="flex justify-between items-start">
@@ -476,7 +476,7 @@ const NearbyComplaintCard = ({
         disabled={complaint.assigned_to || isLoading}
         className={`w-full mt-auto py-2 px-4 rounded-md font-semibold text-sm transition-colors flex items-center justify-center gap-2 ${
           complaint.assigned_to
-            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+            ? "bg-gray-200 text-black cursor-not-allowed"
             : isLoading
             ? "bg-indigo-300 text-white cursor-wait"
             : "bg-indigo-600 text-white hover:bg-indigo-700"
@@ -537,7 +537,7 @@ const AssignedComplaintCard = ({
             <StatusButton
               onClick={() => handleUpdateStatus(complaint._id, "in_review")}
               isLoading={isLoading}
-              className="bg-blue-100 text-blue-700 hover:bg-blue-200"
+              className="bg-blue-600 text-white hover:bg-blue-700"
             >
               In Progress
             </StatusButton>
