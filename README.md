@@ -1,109 +1,104 @@
-🧹 Clean Street – Civic Issue Reporting & Tracking System
-👥 Team: Team-1
-👩‍💻 Team Lead: Sindhu Sekar
-📚 Internship: Infosys Springboard Virtual Internship 6.0
-📌 1. Introduction
+# INFOSYS INTERNSHIP 6.0 [Angular Stack Development]
+# 🌆 Clean Street – Civic Issue Reporting & Tracking App 
 
-Clean Street is a full-stack web application designed to help citizens report civic issues and enable authorities to track, manage, and resolve them efficiently.
-This project showcases end-to-end development skills including UI design, API development, security implementation, and deployment readiness.
+![Infosys Internship 6.0](https://img.shields.io/badge/Infosys%20-Internship%206.0-%230072C6?style=for-the-badge&logoColor=white)  
+![Project Status](https://img.shields.io/badge/Status-Completed-brightgreen)  
+![Built With](https://img.shields.io/badge/Stack-MERN-blue)  
+![Team](https://img.shields.io/badge/Team-1-orange)  
+![🚀 Live Demo](https://img.shields.io/badge/Live-Demo-blueviolet?link=https://YOUR_FRONTEND_URL_HERE)  
 
-🎯 2. Project Objectives
+---
 
-📝 Allow citizens to report street-related issues easily
+## 👥 Team Roles
 
-🔍 Enable admin/volunteers to track and manage complaints
+- 💼 Team Lead & Full Stack Developer: ![Sindhu S](https://img.shields.io/badge/Sindhu_S-Team_Lead-brightgreen) – Led the project, developed Frontend & Backend  
+- 🎨 UI Designer: ![Uwais Kasmani](https://img.shields.io/badge/Uwais_Kasmani-UI_Designer-blue) – Designed UI using Figma  
+- 🛠️ Final Frontend (Admin Dashboard Only): ![Annapoorna SJ](https://img.shields.io/badge/AnnapoornaSJ-Frontend_Admin-red) – Did not contribute in final version  
 
-🔒 Provide secure authentication and structured APIs
+---
 
-📱 Deliver a clean and responsive user interface
+## 📝 Project Overview
 
-🛠️ 3. Technology Stack
-🎨 Frontend
+Clean Street is a smart civic issue reporting and tracking system developed as part of Infosys Springboard Internship 6.0.  
+Users can report street cleanliness issues, volunteers manage assigned complaints, and admins monitor all complaints efficiently.  
 
-React (Vite)
+---
 
-TailwindCSS
+## ⚡ Key Features
 
-Axios
+- **User:** Report complaints with multiple images, track status, add comments, upvote/downvote  
+- **Volunteer:** View & manage assigned complaints, update status  
+- **Admin:** Monitor all complaints, view dashboard stats  
 
-React Router DOM
+---
 
-⚙️ Backend
+## 🏆 Agile Methodology
 
-Node.js + Express
+- Project divided into 4 milestones following Agile methodology  
+- After each milestone, a demo was presented to Infosys mentor  
+- Iterative development with continuous feedback  
 
-MongoDB + Mongoose
+---
 
-JWT Authentication
+## 🚀 Deployment
 
-Cloudinary (Image Uploads)
+- Frontend: Deploy on Vercel or Netlify  
+- Backend: Deploy on Railway, Render, or Heroku  
+- Environment Variables:  
+  - Backend `.env`: MongoDB URI, JWT secret, Cloudinary keys  
+  - Frontend `.env`:
+    ```env
+    
+    VITE_API_URL=https://YOUR_BACKEND_URL
+    ```
 
-⭐ 4. Key Features
-👤 User
+---
 
-Register & login
+## 💻 How to Run Locally
 
-File new complaints with images
-
-Track status (Pending → In Progress → Resolved)
-
-View submission history
-
-🛠️ Admin / Volunteer
-
-View all complaints
-
-Assign volunteers
-
-Update complaint status
-
-Manage users & issue flow
-
-🚀 5. Setup Instructions
-🖥️ Backend Setup
-cd back-end
+```bash
+git clone https://github.com/sindhu-027/Civic-issue-reporting-tracking-app-Infosys-internship.git
+cd Civic-issue-reporting-tracking-app-Infosys-internship
+cd backend
 npm install
 npm run dev
-
-
-Backend .env
-
-MONGO_URI=your_mongo_url
-JWT_SECRET=your_secret_key
-CLOUDINARY_CLOUD_NAME=xxxx
-CLOUDINARY_API_KEY=xxxx
-CLOUDINARY_API_SECRET=xxxx
-
-🌐 Frontend Setup
-cd front-end
+cd ../frontend
 npm install
 npm run dev
+````
 
+---
 
-Frontend .env
+Open browser at``` http://localhost:5173```
 
-VITE_BACKEND_URL=http://localhost:5000
+---
 
-📂 6. Project Structure
-back-end/
-  controllers/
-  models/
-  routes/
-  middleware/
-  server.js
+**📂Project Structure**
+```
+backend/       → Node.js + Express API
+frontend/      → React + TailwindCSS + Vite
+models/        → MongoDB schemas
+controllers/   → API logic
+routes/        → API endpoints
 
-front-end/
-  src/
-    components/
-    pages/
-    api/
-    App.jsx
-    main.jsx
+```
+---
 
-🔎 7. Additional Notes
+**📈 Live Demo**
+```
+🚀 Clean Street App Link
+```
+---
+**Additional Notes**
 
 Code is modular and structured for readability
 
 Branch: team_1_sindhu_lead contains the final project submission done by Team 1
 
 All features were collaboratively developed and tested
+
+---
+**📜 License**
+
+No formal license included. Contact Sindhu S for usage permissions.
+
