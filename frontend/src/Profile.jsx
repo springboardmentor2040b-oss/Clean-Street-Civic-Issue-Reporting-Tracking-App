@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Dashboard.css";
 import "./profile.css";
 
 function Profile() {
@@ -100,17 +101,31 @@ function Profile() {
     }
   };
 
-  const handleNavClick = (path) => {
-    navigate(path);
+  // Logout handler
+  const handleLogout = () => {
+    // Clear all auth data from localStorage
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userId");
+    
+    // Redirect to login page
+    navigate("/login");
   };
 
+
+
   return (
-    <div className="profile-container">
+    <div className="dashboard">
+      <main className="dashboard-content profile-content">
+        {/* Back Button aligned with complaints page */}
+        <div className="back-btn-container">
+          <button type="button" className="back-btn" onClick={() => navigate(-1)}>
+            ← Back
+          </button>
+        </div>
+        <div className="profile-container">
       {!editMode ? (
         <>
-          <div className="back-btn" onClick={() => navigate(-1)}>
-            ← BACK
-          </div>
           <div className="profile-header">
             <div className="avatar-box">
               <img
@@ -118,7 +133,7 @@ function Profile() {
                   alt="User Avatar"
                   className="avatar-large"
               />
-              <button 
+              <button
                className="camera-btn"
                   onClick={() => fileInputRef.current && fileInputRef.current.click()}
                   disabled={uploading}
@@ -130,9 +145,14 @@ function Profile() {
               <h2>{user.name}</h2>
               <p>Citizen Id: {user.citizenId}</p>
             </div>
-            <button className="primary-btn" onClick={() => setEditMode(true)}>
-              Edit Profile
-            </button>
+            <div className="profile-actions">
+              <button className="primary-btn" onClick={() => setEditMode(true)}>
+                Edit Profile
+              </button>
+              <button className="logout-btn" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
             <input
                   type="file"
                   ref={fileInputRef}
@@ -190,27 +210,6 @@ function Profile() {
         </>
       ) : (
         <>
-          <div className="topbar">
-            <div
-              className="logo"
-              onClick={() => handleNavClick("/dashboard")}
-            >
-              CLEAN STREET
-            </div>
-            <nav>
-              <span onClick={() => handleNavClick("/dashboard")}>Dashboard</span>
-              <span onClick={() => handleNavClick("/report")}>Report Issue</span>
-              <span onClick={() => handleNavClick("/complaints")}>
-                View Complaints
-              </span>
-              <span
-                onClick={() => handleNavClick("/profile")}
-                className="profile-icon"
-              >
-                👤
-              </span>
-            </nav>
-          </div>
           <div className="edit-profile-container">
             <h2>Profile Information</h2>
             <div className="edit-form">
@@ -303,6 +302,8 @@ function Profile() {
           </div>
         </>
       )}
+        </div>
+      </main>
     </div>
   );
 }

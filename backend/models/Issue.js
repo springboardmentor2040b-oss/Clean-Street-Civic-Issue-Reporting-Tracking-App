@@ -17,6 +17,7 @@
 // module.exports = mongoose.model('Issue', issueSchema);
 
 const mongoose = require('mongoose');
+const Log = require('../models/Log');
 
 const issueSchema = new mongoose.Schema(
   {

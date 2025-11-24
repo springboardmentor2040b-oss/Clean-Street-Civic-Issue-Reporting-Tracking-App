@@ -51,7 +51,7 @@ const AdminComplaintsTable = ({ issues = [] }) => {
             issues.map((it) => (
               <tr key={it._id}>
                 <td>{it.title || "Untitled"}</td>
-                <td>{it.location || "N/A"}</td>
+                <td>{it.address || "N/A"}</td>
                 <td>
                   {new Date(it.createdAt || it.date || Date.now()).toLocaleDateString("en-IN", {
                     day: "2-digit",

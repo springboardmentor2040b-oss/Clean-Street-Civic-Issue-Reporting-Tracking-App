@@ -1,0 +1,353 @@
+.top-nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  padding: 14px 18px; /* slightly taller */
+  border-radius: 0; /* flush to edges */
+  background: linear-gradient(135deg, #2d5a3d 0%, #4a7c59 100%);
+  color: #ffffff;
+  box-shadow: 0 28px 48px rgba(61, 84, 40, 0.22);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  width: 100%;
+  margin: 0; /* no top/side margins */
+  z-index: 900;
+}
+
+.top-nav:focus-within {
+  transform: translateY(-1px);
+  box-shadow: 0 48px 72px rgba(61, 84, 40, 0.28);
+}
+
+.brand {
+  background: none;
+  border: none;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.brand-logo {
+  height: 48px; /* slightly larger logo */
+  width: auto;
+  border-radius: 16px;
+  box-shadow: 0 12px 22px rgba(32, 52, 27, 0.25);
+}
+
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: rgba(0, 0, 0, 0.08);
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.nav-toggle-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  color: inherit;
+}
+
+.nav-toggle-icon--grid rect {
+  fill: currentColor;
+  opacity: 0.85;
+}
+
+.nav-toggle-icon--close path {
+  stroke: currentColor;
+}
+
+.nav-links {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  letter-spacing: 0.03em;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  position: relative;
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding-bottom: 6px;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: #ffffff;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: #ffffff;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.nav-link.active,
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: #ffffff;
+}
+
+.nav-link.active::after,
+.nav-link:hover::after,
+.nav-link:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.profile {
+  position: relative;
+  width: 48px; /* increased a bit */
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.24);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile:hover,
+.profile:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 36px rgba(0, 0, 0, 0.16);
+}
+
+.profile svg {
+  width: 24px;
+  height: 24px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (max-width: 1024px) {
+  .top-nav {
+    border-radius: 0;
+    padding: 12px 16px;
+    gap: 20px;
+  }
+
+  .nav-links {
+    gap: 22px;
+  }
+}
+
+@media (max-width: 760px) {
+  .top-nav {
+    gap: 16px;
+    padding: 14px 16px;
+    border-radius: 0;
+    justify-content: space-between;
+  }
+
+  .brand {
+    order: 1;
+  }
+
+  .brand-logo {
+    height: 44px;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    margin-left: auto;
+    order: 2;
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .nav-toggle:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .nav-toggle-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 18px 24px 28px;
+    flex-direction: column;
+    align-items: flex-start;
+    background: linear-gradient(155deg, rgba(45, 90, 61, 0.98) 0%, rgba(74, 124, 89, 0.95) 100%);
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 32px 52px rgba(20, 38, 26, 0.3);
+    gap: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-12px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .nav-links.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .nav-link {
+    font-size: 1rem;
+    width: 100%;
+    padding: 6px 0;
+  }
+
+  .profile {
+    order: 3;
+    margin-left: 0;
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .profile:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+@media (max-width: 600px) {
+  .top-nav {
+    border-radius: 0;
+    padding: 12px;
+    gap: 14px;
+  }
+
+  .brand-logo {
+    height: 42px;
+  }
+
+  .profile {
+    width: 46px;
+    height: 46px;
+  }
+
+  .profile svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* Dashboard-specific adjustments: make dashboard nav match other pages (larger, white links, prominent active underline) */
+.top-nav--dashboard {
+  background: linear-gradient(135deg, #2d5a3d 0%, #3c6b48 100%); /* keep theme but slightly richer */
+  box-shadow: 0 28px 48px rgba(61, 84, 40, 0.22);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  padding: 12px 20px; /* reduced padding */
+}
+
+/* make the logo sit in a subtle rounded card like the screenshot */
+.top-nav--dashboard .brand {
+  padding: 8px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 22px rgba(20, 38, 26, 0.18);
+}
+
+.top-nav--dashboard .brand-logo {
+  height: 40px; /* reduced */
+  width: auto;
+  border-radius: 16px;
+  box-shadow: 0 14px 26px rgba(32, 52, 27, 0.28);
+}
+
+/* spacing and link appearance to match the second image */
+.top-nav--dashboard .nav-links {
+  gap: 40px;
+}
+
+.top-nav--dashboard .nav-link {
+  color: #ffffff;
+  font-size: 1.12rem;
+  font-weight: 600;
+  padding-bottom: 8px;
+  opacity: 0.98;
+}
+
+/* stronger underline for active link on dashboard */
+.top-nav--dashboard .nav-link::after {
+  height: 4px;
+  background: #ffffff;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.top-nav--dashboard .nav-link.active::after,
+.top-nav--dashboard .nav-link:hover::after,
+.top-nav--dashboard .nav-link:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* slightly larger profile avatar */
+.top-nav--dashboard .profile {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+}
+.top-nav--dashboard .profile svg {
+  width: 24px;
+  height: 24px;
+  color: #ffffff;
+}
+
+/* responsive tweaks for smaller screens while keeping the dashboard look */
+@media (max-width: 760px) {
+  .top-nav--dashboard {
+    padding: 12px 16px;
+  }
+  .top-nav--dashboard .brand-logo {
+    height: 48px;
+  }
+  .top-nav--dashboard .nav-links {
+    gap: 20px;
+  }
+  .top-nav--dashboard .nav-link {
+    font-size: 1rem;
+  }
+}

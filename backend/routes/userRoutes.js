@@ -4,6 +4,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const verifyJWT = require('../middleware/verifyJWT');
+const authMiddleware = require('../middleware/authMiddleware');
 
 // ===========================
 // REGISTER USER
@@ -116,6 +117,22 @@ router.put('/profile', verifyJWT, async (req, res) => {
 
     const updatedUser = await user.save();
     res.json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ===========================
+// GET ALL USERS (Admin Only)
+// ===========================
+router.get('/', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admin role required.' });
+    }
+
+    const users = await User.find({}).select('-password');
+    res.json(users);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -9,6 +9,8 @@ import Profile from './Profile.jsx';
 import ReportIssue from './ReportIssue.jsx';
 import ViewComplaints from "./ViewComplaints";
 import AdminDashboard from "./components/AdminDashboard";  // ✅ correct import path
+import AdminReports from "./components/AdminReports";
+import AdminUsers from "./components/AdminUsers";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path="/report" element={<ReportIssue />} />
         <Route path="/complaints" element={<ViewComplaints />} />
         <Route path="/admin" element={<AdminDashboard />} /> {/* ✅ consistent name */}
+        <Route path="/admin/reports" element={<AdminReports />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
       </Routes>
     </Router>
   );

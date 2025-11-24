@@ -13,17 +13,11 @@ const AdminSidebar = ({ logo }) => {
         <NavLink to="/admin" end className={({isActive}) => isActive ? "active" : ""}>
           Overview
         </NavLink>
-        <NavLink to="/admin/complaints" className={({isActive}) => isActive ? "active" : ""}>
-          Complaints
-        </NavLink>
         <NavLink to="/admin/users" className={({isActive}) => isActive ? "active" : ""}>
           Users
         </NavLink>
         <NavLink to="/admin/reports" className={({isActive}) => isActive ? "active" : ""}>
           Reports
-        </NavLink>
-        <NavLink to="/admin/settings" className={({isActive}) => isActive ? "active" : ""}>
-          Settings
         </NavLink>
       </nav>
 

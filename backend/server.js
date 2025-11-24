@@ -79,6 +79,7 @@ const path = require('path');
 
 const userRoutes = require('./routes/userRoutes');
 const issueRoutes = require('./routes/issueRoutes');
+const logsRouter = require('./routes/logs');
 
 const app = express();
 
@@ -115,6 +116,6 @@ app.get('/', (req, res) => res.send('API is running...'));
 
 app.use('/api/users', userRoutes);
 app.use('/api/issues', issueRoutes);
-
+app.use('/api/logs', logsRouter);
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

@@ -8,7 +8,11 @@ import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const [issues, setIssues] = useState([]);
+  const [filteredIssues, setFilteredIssues] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showFilter, setShowFilter] = useState(false);
+  const [filterLocation, setFilterLocation] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -43,7 +47,26 @@ const AdminDashboard = () => {
     fetchComplaints();
   }, [token]);
 
-  const handleGoToReport = () => navigate("/report");
+  const handleGoBack = () => navigate("/dashboard");
+
+  // Apply filters
+  useEffect(() => {
+    let filtered = issues;
+
+    if (filterLocation) {
+      filtered = filtered.filter((issue) =>
+        issue.address?.toLowerCase().includes(filterLocation.toLowerCase())
+      );
+    }
+
+    if (filterStatus) {
+      filtered = filtered.filter((issue) =>
+        issue.status?.toLowerCase() === filterStatus.toLowerCase()
+      );
+    }
+
+    setFilteredIssues(filtered);
+  }, [issues, filterLocation, filterStatus]);
 
   // 🧮 Dynamically count statuses (handles any type automatically)
   const statusCounts = issues.reduce((acc, issue) => {
@@ -52,6 +75,11 @@ const AdminDashboard = () => {
     return acc;
   }, {});
 
+  const handleClearFilters = () => {
+    setFilterLocation("");
+    setFilterStatus("");
+  };
+
   if (loading) return <div>Loading complaints...</div>;
 
   return (
@@ -59,11 +87,11 @@ const AdminDashboard = () => {
       <AdminSidebar logo={logo} />
       <div className="admin-main">
         <header className="admin-top">
-          <h1>Admin Dashboard</h1>
-          <div className="admin-top-actions">
-            <button className="btn" onClick={handleGoToReport}>
-              Report Issue
+          <div className="admin-top-left">
+            <button className="btn-back" onClick={handleGoBack}>
+              ← Back
             </button>
+            <h1>Admin Dashboard</h1>
           </div>
         </header>
 
@@ -78,16 +106,59 @@ const AdminDashboard = () => {
         </section>
 
         <section className="admin-content">
-          <div className="admin-left-panel">
-            <div className="card">
-              <h3>Community Reports</h3>
-              <p>Latest activity overview and quick controls.</p>
-            </div>
-          </div>
-
+          
           <div className="admin-right-panel">
-            <h2>All Complaints</h2>
-            <AdminComplaintsTable issues={issues} />
+            <div className="admin-complaints-header">
+              <h2>All Complaints</h2>
+              <button 
+                className="btn-filter"
+                onClick={() => setShowFilter(!showFilter)}
+                title="Toggle filter"
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+              </button>
+            </div>
+
+            {showFilter && (
+              <div className="filter-panel">
+                <div className="filter-group">
+                  <label>Location:</label>
+                  <input
+                    type="text"
+                    placeholder="Search by location..."
+                    value={filterLocation}
+                    onChange={(e) => setFilterLocation(e.target.value)}
+                  />
+                </div>
+
+                <div className="filter-group">
+                  <label>Status:</label>
+                  <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                  >
+                    <option value="">All Statuses</option>
+                    {Object.keys(statusCounts).map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button 
+                  className="btn-clear-filter"
+                  onClick={handleClearFilters}
+                >
+                  Clear Filters
+                </button>
+              </div>
+            )}
+
+            <AdminComplaintsTable issues={filteredIssues.length > 0 ? filteredIssues : issues} />
           </div>
         </section>
       </div>

@@ -71,11 +71,34 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
+}
+
+.admin-top-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .admin-top h1 {
   margin: 0;
   font-size: 20px;
+}
+
+.btn-back {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #3d6b3c;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+  background: #3d6b3c;
+  color: #fff;
 }
 
 .admin-top .btn {
@@ -126,6 +149,93 @@
 
 .admin-right-panel {
   flex: 1;
+}
+
+.admin-complaints-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.admin-complaints-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.btn-filter {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #3d6b3c;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.btn-filter:hover {
+  background: #3d6b3c;
+  color: #fff;
+}
+
+.filter-panel {
+  background: #f8faf8;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a2a1a;
+}
+
+.filter-group input,
+.filter-group select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  outline: none;
+  border-color: #3d6b3c;
+  box-shadow: 0 0 0 2px rgba(61, 107, 60, 0.1);
+}
+
+.btn-clear-filter {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #e76f51;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.btn-clear-filter:hover {
+  background: #d45a3a;
 }
 
 .card {

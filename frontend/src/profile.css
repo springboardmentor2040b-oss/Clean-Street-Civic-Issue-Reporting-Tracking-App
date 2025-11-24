@@ -6,12 +6,42 @@
   width: 90%;
 }
 
-/* Back button */
+/* Profile page wrapper to mirror report spacing */
+.profile-content {
+  padding-top: clamp(4px, 1.2vw, 10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Back button (shared style with complaints page) */
+.back-btn-container {
+  position: static;
+  align-self: stretch;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  margin: 40px 0 10px;
+  padding: 0 clamp(1rem, 4vw, 2rem);
+}
+
 .back-btn {
   cursor: pointer;
+  font-size: 1rem;
+  color: #5f7f47;
+  font-weight: 600;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  transition: color 0.2s ease;
   margin-bottom: 1rem;
-  color: #2f4f40;
-  font-weight: bold;
+  margin-top: 40px;
+}
+
+.back-btn:hover,
+.back-btn:focus-visible {
+  color: #2d5a3d;
 }
 
 /* Profile Header (View Mode) */
@@ -24,6 +54,14 @@
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
+  margin-top: -10px;
+}
+
+/* Profile actions container for buttons */
+.profile-actions {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
 }
 
 /* Edit Profile Header */
@@ -40,6 +78,24 @@
 
 .avatar-box {
   position: relative;
+  display: inline-block; /* ensure overlay anchors to avatar size */
+}
+
+/* Ensure edit form avatar behaves the same as profile view */
+.edit-profile-container .avatar-box {
+  position: relative;
+}
+.edit-profile-container .camera-btn {
+  position: absolute !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #6aa84f;
+  color: #fff;
+  border-radius: 50%;
+  bottom: -8px;
+  right: -8px;
+  z-index: 2;
 }
 .avatar-large {
   width: 100px;
@@ -49,21 +105,22 @@
 }
 .camera-btn {
   position: absolute;
-  bottom: 5px;
-  right: 5px;
+  bottom: 0px;
+  right: 0px;
   font-size: 1.2rem;
   transition: all 0.3s ease;
   background: #6aa84f;
   border: none;
   color: white;
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   background-size: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Adjusted camera button background size for uploading text */
@@ -82,10 +139,12 @@
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 .primary-btn:hover {
   background: #5a9444;
 }
+
 .secondary-btn {
   background: #ddd;
   color: #333;
@@ -93,9 +152,25 @@
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 .secondary-btn:hover {
   background: #bbb;
+}
+
+/* Logout button */
+.logout-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-weight: 500;
+}
+.logout-btn:hover {
+  background: #c82333;
 }
 
 /* Account Info */
@@ -195,7 +270,8 @@
 }
 
 .edit-profile-container .camera-btn {
-  top: 15%;
+  bottom: 0px;
+  right: 0px;
 }
 
 
@@ -226,7 +302,7 @@
 .edit-profile-container {
   padding: 2rem;
   font-family: "Poppins", sans-serif;
-  max-width: 800px;
+  max-width: 960px; /* align with report card width */
   margin: 0 auto;
   background-color: #ffffff;
   border-radius: 12px;
@@ -273,9 +349,15 @@
     order: 0;
   }
 
-  .profile-header .primary-btn {
+  .profile-header .profile-actions {
     order: 1;
-    align-self: center;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .profile-actions .primary-btn,
+  .profile-actions .logout-btn {
+    width: 100%;
   }
 
   .avatar-large {
@@ -283,20 +365,23 @@
     height: 80px;
   }
 
-  .camera-btn {
-    width: 25px;
-    height: 25px;
+  .edit-profile-container .camera-btn {
+    width: 22px;
+    height: 22px;
     font-size: 1rem;
-    bottom: 0px;
-    right: 0px;
+    bottom: 4px; /* keep overlay on avatar */
+    right: 4px;
   }
 
   .reports-card {
     flex-direction: column;
-    text-align: center;
+    text-align: left; /* align left on mobile */
+    align-items: flex-start;
     gap: 1.5rem;
     padding: 1.5rem;
   }
+  .reports-card .report-info,
+  .reports-card h4 { text-align: left; }
 
   .circle-chart {
     width: 100px;
@@ -373,10 +458,13 @@
     height: 70px;
   }
 
-  .camera-btn {
-    width: 20px;
-    height: 20px;
+  /* Camera icon background should be 25px on mobile */
+  .edit-profile-container .camera-btn {
+    width: 25px; /* green circular background size on mobile */
+    height: 25px;
     font-size: 0.8rem;
+    bottom: 4px;
+    right: 4px;
   }
 
   .circle-chart {
@@ -392,12 +480,16 @@
     padding: 0.7rem;
   }
 
-  /* Improve touch targets */
+  /* Improve touch targets (exclude camera button to keep it 25px) */
   .primary-btn,
   .secondary-btn,
-  .camera-btn {
+  .logout-btn {
     min-height: 44px;
     min-width: 44px;
+  }
+  .avatar-box .camera-btn {
+    min-height: 25px;
+    min-width: 25px;
   }
 
   /* Better spacing for small screens */
@@ -407,6 +499,18 @@
 
   .button-row {
     margin-top: 1rem;
+  }
+}
+
+/* Ultra small phones: ensure minimal side spacing */
+@media (max-width: 540px) {
+  .profile-content {
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+  }
+  .profile-content .profile-container {
+    padding-left: 3px !important;
+    padding-right: 3px !important;
   }
 }
 

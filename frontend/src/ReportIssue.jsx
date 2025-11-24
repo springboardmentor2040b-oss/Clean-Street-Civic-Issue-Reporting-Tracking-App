@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import "./Dashboard.css";
 import "./ReportIssue.css";
 import { useNavigate } from "react-router-dom";
-import logo from "./assets/logo.jpeg";
+import TopNav from "./components/TopNav/TopNav";
 
 const priorityOptions = ["Low", "Medium", "High"];
 const priorityLevelOptions = ["1", "2", "3"];
@@ -79,7 +80,7 @@ export default function ReportIssue() {
         latitude: mapCenter.lat,
         longitude: mapCenter.lng,
         dateReported: new Date().toISOString(),
-        status: "Pending",
+        status: "Open",
       };
 
       const response = await fetch("http://localhost:5001/api/issues/create", {
@@ -115,48 +116,16 @@ export default function ReportIssue() {
   };
 
   return (
-    <>
-      {/* Navbar */}
-      <header className="top-nav">
-        <div className="brand">
-          <img src={logo} alt="Clean Street Logo" className="brand-logo" />
-        </div>
-        <nav className="nav-links">
-          <a href="/dashboard">Dashboard</a>
-          <a href="/report" className="active">Report Issue</a>
-          <a href="/complaints">View Complaints</a>
-        </nav>
-        <button type="button" className="profile" onClick={() => navigate("/profile")}>
-          <span className="sr-only">Account</span>
-          <svg viewBox="0 0 24 24" aria-hidden focusable="false">
-            <path
-              d="M12 4.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zm0 8.5c3.35 0 6 2.22 6 4.96V19.5H6v-1.54C6 15.22 8.65 13 12 13z"
-              fill="currentColor"
-            />
-          </svg>
-        </button>
-      </header>
+    <div className="dashboard">
+      <TopNav activePath="/report" />
 
-      {/* Form */}
-      <div className="container">
-        {/* Back Button */}
-        <div className="back-btn-container">
-          <div className="back-btn" onClick={() => navigate(-1)} style={{
-            cursor: "pointer",
-            fontSize: "1rem",
-            color: "#5f7f47",
-            fontWeight: "600",
-            marginBottom: "1rem"
-          }}>
-            ← BACK
-          </div>
-        </div>
+      <main className="dashboard-content report-content">
+        <div className="report-card">
+          <h2 className="report-title">Report a Civic Issue</h2>
+          <p className="report-subtitle">Please fill out this form to raise your issue.</p>
 
-        <h2>Report a Civic Issue</h2>
-        <div className="subtitle">Please fill out this form to raise your issue.</div>
-
-        <form onSubmit={handleSubmit}>
-          {/* Title + Priority */}
+          <form className="report-form" onSubmit={handleSubmit}>
+          {/* Title + Priority (Row 1) */}
           <div className="form-row">
             <div className="form-group">
               <label>Issue Title:</label>
@@ -175,7 +144,10 @@ export default function ReportIssue() {
                 ))}
               </select>
             </div>
+          </div>
 
+          {/* Priority Level + Nearby Landmark (Row 2) */}
+          <div className="form-row">
             <div className="form-group">
               <label>Priority Level:</label>
               <select
@@ -199,47 +171,33 @@ export default function ReportIssue() {
           </div>
 
           {/* Image Upload */}
-          <div className="image-upload-box" style={{
-            textAlign: "center",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center"
-          }}>
-            <div className="image-upload-preview" style={{ display: "flex", gap: "10px" }}>
+          <div className="image-upload-box">
+            <div className="image-upload-preview">
+              {images.length === 0 && (
+                <p className="image-upload-placeholder">Drop or upload photos to help describe the issue.</p>
+              )}
               {images.slice(0, 3).map((img, i) => (
-                <div key={i} style={{ position: "relative" }}>
+                <div key={i} className="image-upload-item">
                   <img
                     src={img instanceof File ? URL.createObjectURL(img) : img}
-                    alt=""
-                    style={{
-                      width: "100px",
-                      height: "100px",
-                      objectFit: "cover",
-                      borderRadius: "5px",
-                      border: "1px solid #c0cec6",
-                    }}
+                    alt={`Uploaded evidence ${i + 1}`}
+                    className="image-upload-thumb"
                   />
                   <button
                     type="button"
-                    className="delete-btn"
-                    onClick={() => setImages(images.filter((_, idx) => idx !== i))}
-                    style={{
-                      position: "absolute",
-                      top: "5px",
-                      right: "5px",
-                      backgroundColor: "red",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "50%",
-                      width: "20px",
-                      height: "20px",
-                    }}
+                    className="image-upload-delete"
+                    aria-label={`Remove image ${i + 1}`}
+                    onClick={() =>
+                      setImages((prev) => prev.filter((_, idx) => idx !== i))
+                    }
                   >
                     ×
                   </button>
                 </div>
               ))}
+              {images.length > 3 && (
+                <span className="image-upload-overflow">+{images.length - 3} more</span>
+              )}
             </div>
 
             <div className="image-upload-note">
@@ -252,7 +210,12 @@ export default function ReportIssue() {
               multiple
               id="hidden-file-input"
               className="image-upload-input"
-              onChange={(e) => setImages([...images, ...Array.from(e.target.files)])}
+              onChange={(e) =>
+                setImages((prev) => [
+                  ...prev,
+                  ...Array.from(e.target.files || [])
+                ])
+              }
             />
 
             <button
@@ -283,12 +246,7 @@ export default function ReportIssue() {
             <div className="form-group">
               <label>Location:</label>
               <MapContainer
-                style={{
-                  height: "260px",
-                  width: "100%",
-                  borderRadius: "13px",
-                  border: "1px solid #c9d9c2",
-                }}
+                className="report-map"
                 center={mapCenter}
                 zoom={10}
                 scrollWheelZoom={false}
@@ -313,7 +271,8 @@ export default function ReportIssue() {
             {uploading ? "Uploading..." : "SUBMIT"}
           </button>
         </form>
-      </div>
-    </>
+        </div>
+      </main>
+    </div>
   );
 }
