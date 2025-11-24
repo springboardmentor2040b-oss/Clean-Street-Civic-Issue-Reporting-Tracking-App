@@ -77,24 +77,6 @@ res.status(201).json({ message: 'Issue created successfully', issue: newIssue })
   }
 });
 
-// Get all issues
-// router.get('/all', async (req, res) => {
-//   try {
-//     const issues = await Issue.find();
-//     const formattedIssues = issues.map((issue) => ({
-//       _id: issue._id,
-//       title: issue.title,
-//       description: issue.description,
-//       status: issue.status || issue.priority,
-//       location: issue.address,
-//       date: issue.createdAt.toISOString().split('T')[0],
-//       images: issue.images,
-//     }));
-//     res.status(200).json(formattedIssues);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error fetching issues', error });
-//   }
-// });
 
 router.get('/all', async (req, res) => {
   try {
@@ -263,108 +245,7 @@ router.post('/:issueId/comments/:commentId/replies', authMiddleware, async (req,
   }
 });
 
-// Update complaint status (volunteer-only)
-// router.patch('/:id/status', authMiddleware, async (req, res) => {
-//   try {
-//     const { status } = req.body;
-//     const id = req.params.id;
 
-//     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-//       return res.status(400).json({ message: 'Invalid issue id' });
-//     }
-
-//     if (!status || !['Open', 'Closed'].includes(status)) {
-//       return res.status(400).json({ message: 'Invalid status value' });
-//     }
-
-//     // Fix role-based access control logic
-//     if (req.user.role !== 'volunteer' && req.user.role !== 'admin') {
-//       return res.status(403).json({ message: 'Permission denied' });
-//     }
-
-//     const issue = await Issue.findById(id);
-//     if (!issue) {
-//       return res.status(404).json({ message: 'Issue not found' });
-//     }
-
-//     issue.status = status;
-//     await issue.save();
-
-//     res.status(200).json({ message: 'Status updated successfully', issue });
-//   } catch (error) {
-//     console.error('Error updating status:', error);
-//     res.status(500).json({ message: 'Error updating status', error });
-//   }
-// });
-
-// router.patch('/:id/status', authMiddleware, async (req, res) => {
-//   try {
-//     const { status } = req.body;
-//     const id = req.params.id;
-
-//     // basic id validation
-//     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-//       return res.status(400).json({ message: 'Invalid issue id' });
-//     }
-
-//     // validate status value (adjust allowed values as needed)
-//     if (!status || !['Open', 'Closed'].includes(status)) {
-//       return res.status(400).json({ message: 'Invalid status value' });
-//     }
-
-//     // role-based access control
-//     if (req.user.role !== 'volunteer' && req.user.role !== 'admin') {
-//       return res.status(403).json({ message: 'Permission denied' });
-//     }
-
-//     const issue = await Issue.findById(id);
-//     if (!issue) {
-//       return res.status(404).json({ message: 'Issue not found' });
-//     }
-
-//     // capture previous status before change
-//     const previousStatus = issue.status;
-
-//     // set transient actor info (not persisted unless schema saved with this field)
-//     const actorId = req.user ? req.user._id : undefined;
-//     const actorName = req.user ? (req.user.username || req.user.name || req.user.email) : (req.body.actor || 'Unknown');
-
-//     // apply the status change
-//     issue.status = status;
-//     // transient helper for potential model hooks or later auditing
-//     issue._modifiedBy = actorName;
-
-//     await issue.save();
-
-//     // Best-effort log creation (fire-and-forget so logging failures don't block response)
-//     (async () => {
-//       try {
-//         const Log = require('../models/Log'); // require here so top-of-file change isn't required
-//         const logDoc = new Log({
-//           issueId: issue._id,
-//           issueTitle: issue.title || '',
-//           actorId: actorId,
-//           actor: actorName,
-//           action: status,
-//           meta: { previousStatus, newStatus: status },
-//           timestamp: new Date()
-//         });
-//         await logDoc.save();
-//       } catch (logErr) {
-//         // never fail the main request because logging failed
-//         console.error('Failed to create log entry for issue status change:', logErr);
-//       }
-//     })();
-
-//     return res.status(200).json({ message: 'Status updated successfully', issue });
-//   } catch (error) {
-//     console.error('Error updating status:', error);
-//     return res.status(500).json({ message: 'Error updating status', error });
-//   }
-// });
-
-// at top of file (if not already present)
-// const Log = require('../models/Log');
 
 // handler
 router.patch('/:id/status', authMiddleware, async (req, res) => {
